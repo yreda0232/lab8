@@ -201,6 +201,7 @@ for (int j = 0; j < st.length(); j++) {
                 obj.put("lessonId", ls.getLessonId());
                 obj.put("title", ls.getTitle());
                 obj.put("content", ls.getContent());
+                obj.put("resources", ls.getResources());
                 L.put(obj);
             }
             o.put("lessons", L);
@@ -211,6 +212,17 @@ for (int j = 0; j < st.length(); j++) {
         }
 
         writeFile(COURSES_FILE, arr.toString(4));
+    }
+    
+    public ArrayList<Course> readCoursesForInstructor(String instructorId) {
+        ArrayList<Course> allCourses = readCourses();
+        ArrayList<Course> instructorCourses = new ArrayList<>();
+        for (Course c : allCourses) {
+            if (c.getInstructorId().equals(instructorId)) {
+                instructorCourses.add(c);
+            }
+        }
+        return instructorCourses;
     }
 
     // =====================================================================
