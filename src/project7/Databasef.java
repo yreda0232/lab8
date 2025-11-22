@@ -7,10 +7,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-/**
- *
- * @author cs
- */
 public class Databasef {
 
     private static final String USERS_FILE = "users.json";
@@ -21,25 +17,42 @@ public class Databasef {
         this.users = readUsers();
     }
 
+    // =====================================================================
+    // ✅ READ FILE FROM src/project7/
+    // =====================================================================
     private static String readFile(String filename) {
         try {
-            if (!Files.exists(Paths.get(filename))) {
+            InputStream is = Databasef.class.getResourceAsStream("/project7/" + filename);
+
+            if (is == null) {
+                System.out.println("File not found inside resources: " + filename);
                 return "[]";
             }
-            return new String(Files.readAllBytes(Paths.get(filename)));
+
+            return new String(is.readAllBytes());
         } catch (Exception e) {
+            e.printStackTrace();
             return "[]";
         }
     }
 
+    // =====================================================================
+    // ✅ WRITE FILE INTO src/project7/
+    // =====================================================================
     private static void writeFile(String filename, String content) {
-        try (FileWriter fw = new FileWriter(filename)) {
+        try {
+            File file = new File("src/project7/" + filename);
+            FileWriter fw = new FileWriter(file);
             fw.write(content);
+            fw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    // =====================================================================
+    // USERS HANDLING
+    // =====================================================================
     public static ArrayList<User> readUsers() {
         ArrayList<User> users = new ArrayList<>();
         JSONArray arr = new JSONArray(readFile(USERS_FILE));
@@ -60,14 +73,14 @@ public class Databasef {
                     s.getEnrolledCourses().add(enrolled.getString(j));
                 }
 
-                JSONObject prog = o.getJSONObject("progress"); // بدل JSONArray
+                JSONObject prog = o.getJSONObject("progress");
                 for (String courseId : prog.keySet()) {
                     JSONArray completedLessons = prog.getJSONArray(courseId);
                     ArrayList<String> lessonsList = new ArrayList<>();
                     for (int k = 0; k < completedLessons.length(); k++) {
                         lessonsList.add(completedLessons.getString(k));
                     }
-                    s.getProgress().put(courseId, lessonsList); // صح دلوقتي
+                    s.getProgress().put(courseId, lessonsList);
                 }
 
                 users.add(s);
@@ -88,7 +101,6 @@ public class Databasef {
                         ins.getCreatedCourses().add(c);
                     }
                 }
-
 
                 users.add(ins);
             }
@@ -119,7 +131,6 @@ public class Databasef {
                     created.put(c.getCourseId());
                 }
                 o.put("createdCourses", created);
-
             }
 
             arr.put(o);
@@ -128,6 +139,9 @@ public class Databasef {
         writeFile(USERS_FILE, arr.toString(4));
     }
 
+    // =====================================================================
+    // COURSES HANDLING
+    // =====================================================================
     public static ArrayList<Course> readCourses() {
         ArrayList<Course> courses = new ArrayList<>();
         JSONArray arr = new JSONArray(readFile(COURSES_FILE));
@@ -142,7 +156,6 @@ public class Databasef {
                     o.getString("instructorId")
             );
 
-            // Lessons
             JSONArray lessons = o.getJSONArray("lessons");
             for (int j = 0; j < lessons.length(); j++) {
                 JSONObject L = lessons.getJSONObject(j);
@@ -154,15 +167,16 @@ public class Databasef {
                 c.addLesson(l);
             }
 
-            // Students
             JSONArray st = o.getJSONArray("students");
-            for (int j = 0; j < st.length(); j++) {
-                String id = st.getString(j);
-                Student s = Student.getStudentById(id); // مثال
-                if (s != null) {
-                    c.addStudent(s);
-                }
-            }
+
+for (int j = 0; j < st.length(); j++) {
+    JSONObject stuObj = st.getJSONObject(j);
+    String id = stuObj.getString("id");   // ✔ دا الصحيح
+    Student s = Student.getStudentById(id);
+    if (s != null) {
+        c.addStudent(s);
+    }
+}
 
             courses.add(c);
         }
@@ -181,19 +195,16 @@ public class Databasef {
             o.put("description", c.getDescription());
             o.put("instructorId", c.getInstructorId());
 
-            // Lessons
             JSONArray L = new JSONArray();
             for (Lesson ls : c.getLessons()) {
                 JSONObject obj = new JSONObject();
                 obj.put("lessonId", ls.getLessonId());
                 obj.put("title", ls.getTitle());
                 obj.put("content", ls.getContent());
-                obj.put("resources", ls.getResources());
                 L.put(obj);
             }
             o.put("lessons", L);
 
-            // Students
             o.put("students", c.getStudents());
 
             arr.put(o);
@@ -201,25 +212,14 @@ public class Databasef {
 
         writeFile(COURSES_FILE, arr.toString(4));
     }
-    
-    public ArrayList<Course> readCoursesForInstructor(String instructorId) {
-        ArrayList<Course> allCourses = readCourses();
-        ArrayList<Course> instructorCourses = new ArrayList<>();
-        for (Course c : allCourses) {
-            if (c.getInstructorId().equals(instructorId)) {
-                instructorCourses.add(c);
-            }
-        }
-        return instructorCourses;
-    }
 
+    // =====================================================================
     public void addCourse(Course newCourse) {
         ArrayList<Course> courses = readCourses();
         courses.add(newCourse);
         writeCourses(courses);
     }
 
-    // ------------------------- UPDATE COURSE FULLY -------------------------
     public void updateCourse(Course updated) {
         ArrayList<Course> courses = readCourses();
 
@@ -247,11 +247,7 @@ public class Databasef {
 
     public void deleteCourse(String courseId) {
         ArrayList<Course> courses = readCourses();
-
-        // إزالة الكورس اللي id بتاعه يساوي courseId
         courses.removeIf(c -> c.getCourseId().equals(courseId));
-
-        // حفظ التغييرات في JSON
         writeCourses(courses);
     }
 
@@ -264,13 +260,11 @@ public class Databasef {
         return false;
     }
 
-// Prevent duplicate courseId
     public static boolean courseIdExists(String courseId) {
         return readCourses().stream()
                 .anyMatch(c -> c.getCourseId().equals(courseId));
     }
 
-//email validation
     public static boolean isValidEmail(String email) {
         return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
     }
@@ -280,6 +274,6 @@ public class Databasef {
     }
 
     public static boolean isValidPassword(String password) {
-        return password != null && password.length() >= 3; // Basic check
+        return password != null && password.length() >= 3;
     }
 }

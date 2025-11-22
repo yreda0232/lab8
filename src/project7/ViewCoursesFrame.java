@@ -3,19 +3,31 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package project7;
+import java.util.ArrayList;
+
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author cs
  */
 public class ViewCoursesFrame extends javax.swing.JPanel {
+private Student currentStudent;
+private StudentService service;
+private Databasef db;
 
+public ViewCoursesFrame(Student s, StudentService service, Databasef db) {
+    this.currentStudent = s;
+    this.service = service;
+    this.db = db;
+
+    initComponents();
+    loadTablesData();
+}
     /**
      * Creates new form ViewCoursesFrame
      */
-    public ViewCoursesFrame() {
-        initComponents();
-    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -47,6 +59,11 @@ public class ViewCoursesFrame extends javax.swing.JPanel {
         ));
         jTable1.setShowHorizontalLines(true);
         jTable1.setShowVerticalLines(true);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -71,12 +88,17 @@ public class ViewCoursesFrame extends javax.swing.JPanel {
         jScrollPane2.setViewportView(jTable2);
 
         jButton1.setText("Back");
-
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -90,13 +112,11 @@ public class ViewCoursesFrame extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(310, 310, 310)
                                 .addComponent(jLabel2)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(layout.createSequentialGroup()
-
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,10 +136,78 @@ public class ViewCoursesFrame extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        StudentDashboardFrame dashboard = new StudentDashboardFrame(currentStudent, service, db);
+       dashboard.setVisible(true);
+SwingUtilities.getWindowAncestor(this).dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable1MouseClicked
 
+
+    private void loadTablesData() {
+
+    // Load all courses from JSON
+    ArrayList<Course> allCourses = Databasef.readCourses();
+    ArrayList<User> allUsers = Databasef.readUsers();
+
+    // ----------------- Fill Available Courses Table (jTable1) -----------------
+    javax.swing.table.DefaultTableModel model1 =
+            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+
+    model1.setRowCount(0);  // Clear table
+
+    for (Course c : allCourses) {
+
+        // Get instructor name by instructorId
+        String instructorName = "";
+        for (User u : allUsers) {
+            if (u.getId().equals(c.getInstructorId())) {
+                instructorName = u.getName();
+                break;
+            }
+        }
+
+        Object[] row = {
+                c.getCourseId(),
+                c.getTitle(),
+                c.getDescription(),
+                instructorName
+        };
+
+        model1.addRow(row);
+    }
+
+
+    // ----------------- Fill Enrolled Courses Table (jTable2) -----------------
+    javax.swing.table.DefaultTableModel model2 =
+            (javax.swing.table.DefaultTableModel) jTable2.getModel();
+
+    model2.setRowCount(0);  // Clear table
+
+    // TODO: Replace with actual logged in student
+    String loggedStudentId = currentStudent.getId();
+
+
+    for (Course c : allCourses) {
+    for (User u : c.getStudents()) {
+        if (u.getId().equals(loggedStudentId)) {
+            model2.addRow(new Object[]{
+                c.getCourseId(),
+                c.getTitle()
+            });
+        }
+    }
+}
+    
+    
+    
+}
+
+    
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
@@ -130,3 +218,6 @@ public class ViewCoursesFrame extends javax.swing.JPanel {
     private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 }
+
+
+

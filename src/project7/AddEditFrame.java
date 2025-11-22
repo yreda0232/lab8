@@ -19,7 +19,7 @@ public class AddEditFrame extends javax.swing.JPanel {
 DefaultTableModel model;
 JTable table;
 ArrayList<Course> courses = new ArrayList<>();
-  private Instructor currentInstructor;
+  private Instructor instructor;
   private Course currentCourse;
 private Databasef db = new Databasef();
     /**
@@ -30,8 +30,7 @@ private Databasef db = new Databasef();
   public AddEditFrame(Instructor instructor) {
     initComponents();   // لازم أولًا يتم إنشاء كل عناصر الواجهة
 
-    currentInstructor = instructor;
-    currentInstructor.setCreatedCourses(db.readCoursesForInstructor(currentInstructor.getId()));
+    this.instructor = instructor;
 
     // Load instructor courses into the ComboBox
     jComboBox1.removeAllItems();
@@ -80,7 +79,6 @@ private Databasef db = new Databasef();
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
-        jButton4 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -134,13 +132,6 @@ private Databasef db = new Databasef();
             }
         });
 
-        jButton4.setText("Back to instructor menu");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -156,10 +147,6 @@ private Databasef db = new Databasef();
                 .addGap(123, 123, 123)
                 .addComponent(jButton2)
                 .addGap(138, 138, 138))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton4)
-                .addGap(94, 94, 94))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,9 +159,7 @@ private Databasef db = new Databasef();
                     .addComponent(jButton3)
                     .addComponent(jButton2)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(62, 62, 62)
-                .addComponent(jButton4)
-                .addGap(0, 178, Short.MAX_VALUE))
+                .addGap(0, 263, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -247,17 +232,10 @@ JOptionPane.showMessageDialog(null, "All changes saved!");
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         int selectedIndex = jComboBox1.getSelectedIndex();
     if (selectedIndex >= 0) {
-        Course selectedCourse = currentInstructor.getCreatedCourses().get(selectedIndex);
+        Course selectedCourse = instructor.getCreatedCourses().get(selectedIndex);
         loadLessons(selectedCourse);
     }
     }//GEN-LAST:event_jComboBox1ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        InstructorFrame instructorFrame = new InstructorFrame(currentInstructor,db);
-    instructorFrame.setVisible(true);
-    javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
-    
-    }//GEN-LAST:event_jButton4ActionPerformed
 
 
 
@@ -265,7 +243,6 @@ JOptionPane.showMessageDialog(null, "All changes saved!");
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
