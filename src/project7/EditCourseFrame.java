@@ -20,6 +20,7 @@ public class EditCourseFrame extends javax.swing.JFrame {
     this.db=db;
     currentInstructor = instructor;
     initComponents();
+    currentInstructor.setCreatedCourses(db.readCoursesForInstructor(currentInstructor.getId()));
     loadCoursesIntoTable();
 }
     private void loadCoursesIntoTable() {
@@ -30,7 +31,8 @@ public class EditCourseFrame extends javax.swing.JFrame {
         model.addRow(new Object[]{
                 c.getCourseId(),
                 c.getTitle(),
-                c.getDescription()
+                c.getDescription(),
+                currentInstructor.getId()
         });
     }
 }
@@ -79,7 +81,7 @@ public class EditCourseFrame extends javax.swing.JFrame {
     oldCourse.setDescription(newDesc);
 
     JOptionPane.showMessageDialog(this, "Course updated!");
-    readCourses();
+    db.writeCourses(currentInstructor.getCreatedCourses());
 }
 
 
@@ -109,6 +111,7 @@ public class EditCourseFrame extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -178,11 +181,18 @@ public class EditCourseFrame extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Back to instructor menu");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 817, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 922, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -202,7 +212,9 @@ public class EditCourseFrame extends javax.swing.JFrame {
                         .addGap(106, 106, 106)
                         .addComponent(jButton5)
                         .addGap(119, 119, 119)
-                        .addComponent(jButton6)))
+                        .addComponent(jButton6)
+                        .addGap(132, 132, 132)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -225,7 +237,8 @@ public class EditCourseFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton4)
                     .addComponent(jButton5)
-                    .addComponent(jButton6))
+                    .addComponent(jButton6)
+                    .addComponent(jButton1))
                 .addGap(43, 43, 43))
         );
 
@@ -243,6 +256,8 @@ public class EditCourseFrame extends javax.swing.JFrame {
         textField1.setText(selected.getCourseId());
         TitleField.setText(selected.getTitle());
         textField3.setText(selected.getDescription());
+        textField3.setText(selected.getInstructorId());
+
     }
     }//GEN-LAST:event_jTable1MouseClicked
 
@@ -262,9 +277,16 @@ public class EditCourseFrame extends javax.swing.JFrame {
         loadCoursesIntoTable();
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        InstructorFrame instructorFrame = new InstructorFrame(currentInstructor,db);
+    instructorFrame.setVisible(true);
+    dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.TextField TitleField;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
