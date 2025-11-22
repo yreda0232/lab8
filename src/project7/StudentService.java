@@ -119,4 +119,17 @@ db.writeUsers(users);
                 .getOrDefault(courseId, new ArrayList<>())
                 .contains(lessonId);
     }
+    
+    public ArrayList<Course> getVisibleCoursesForStudent() {
+    ArrayList<Course> courses = db.readCourses();
+    ArrayList<Course> visible = new ArrayList<>();
+
+    for (Course c : courses) {
+        if (c.getStatus() == CourseStatus.APPROVED) {
+            visible.add(c);
+        }
+    }
+    return visible;
+}
+    
 }
