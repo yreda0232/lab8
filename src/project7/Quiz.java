@@ -4,10 +4,29 @@
  */
 package project7;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author youssef
  */
 public class Quiz {
+    private String quizId;
+    private String title;
+    private ArrayList<Question> questions;
+    private int maxRetries;
     
+    public Quiz(String quizId, String title, ArrayList<Question> questions, int maxRetries) {
+        this.quizId = quizId;
+        this.title = title;
+        this.questions = questions;
+        this.maxRetries = maxRetries;
+    }
+    
+    public void addQuestion(Question question) {
+        if (this.questions == null) {
+            this.questions = new ArrayList<>();
+        }
+        this.questions.add(question);
+    }
 }

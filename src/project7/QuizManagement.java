@@ -4,12 +4,11 @@
  */
 package project7;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author youssef
  */
-public class Question {
+public class QuizManagement {
+    
     
 }
