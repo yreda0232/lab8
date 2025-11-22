@@ -145,6 +145,7 @@ public class Databasef {
     public static ArrayList<Course> readCourses() {
         ArrayList<Course> courses = new ArrayList<>();
         JSONArray arr = new JSONArray(readFile(COURSES_FILE));
+        
 
         for (int i = 0; i < arr.length(); i++) {
             JSONObject o = arr.getJSONObject(i);
@@ -155,6 +156,13 @@ public class Databasef {
                     o.getString("description"),
                     o.getString("instructorId")
             );
+            String status = o.optString("status", "PENDING");
+            String lastMod = o.optString("lastModifiedBy", "");
+            String lastChange = o.optString("lastStatusChange", "");
+
+            c.setStatus(CourseStatus.valueOf(status));
+            c.setLastModifiedBy(lastMod);
+            c.setLastStatusChange(lastChange);
 
             JSONArray lessons = o.getJSONArray("lessons");
             for (int j = 0; j < lessons.length(); j++) {
@@ -194,6 +202,9 @@ for (int j = 0; j < st.length(); j++) {
             o.put("title", c.getTitle());
             o.put("description", c.getDescription());
             o.put("instructorId", c.getInstructorId());
+            o.put("status", c.getStatus().name());
+            o.put("lastModifiedBy", c.getLastModifiedBy());
+            o.put("lastStatusChange", c.getLastStatusChange());
 
             JSONArray L = new JSONArray();
             for (Lesson ls : c.getLessons()) {

@@ -190,7 +190,7 @@ SwingUtilities.getWindowAncestor(this).dispose();
     String loggedStudentId = currentStudent.getId();
 
 
-    for (Course c : allCourses) {
+    for (Course c : service.getVisibleCoursesForStudent()) {
     for (User u : c.getStudents()) {
         if (u.getId().equals(loggedStudentId)) {
             model2.addRow(new Object[]{
