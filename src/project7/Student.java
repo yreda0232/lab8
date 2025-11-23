@@ -57,9 +57,6 @@ public class Student extends User {
                 && progress.get(courseId).contains(lessonId);
     }
 
-    public HashMap<String, ArrayList<String>> getProgress() {
-        return progress;
-    }
     
     public boolean hasCompletedCourse(Course c) {
     if (!progress.containsKey(c.getCourseId())) return false;
@@ -73,7 +70,7 @@ public class Student extends User {
     public String getName() {
         return name;
     }
-}
+
     
     
     public boolean hasCompletedLesson(String courseId, int lessonId) {
@@ -85,7 +82,6 @@ public class Student extends User {
     public HashMap<String, Integer> getQuizResults() { return quizResults; }
     public HashMap<String, Boolean> getLessonCompleted() { return lessonCompleted; }
     public HashMap<String,ArrayList<String>> getProgress() {return progress;}
-    public String getName() {return name;}
     public String getId() {return id;}
     
     public static Student getStudentById(String id) {
@@ -104,5 +100,5 @@ public class Student extends User {
     
     public ArrayList<Certificate> getCertificates() {return certificates;}
             
-
 }
+
