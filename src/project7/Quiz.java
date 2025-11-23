@@ -17,12 +17,12 @@ public class Quiz {
     private ArrayList<Question> questions;
     private int maxRetries;
     
-    public Quiz(String quizId, String title, ArrayList<Question> questions, int maxRetries,String lessonId) {
+    public Quiz(String quizId, String title, ArrayList<Question> questions,String lessonId) {
         this.quizId = quizId;
         this.title = title;
         this.lessonId=lessonId;
         this.questions = questions;
-        this.maxRetries = maxRetries;
+        this.maxRetries = 2;
     }
 
     public String getQuizId() {

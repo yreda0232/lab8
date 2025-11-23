@@ -13,22 +13,13 @@ import java.util.ArrayList;
 public class Question {
     private String questionId;
     private String text;
-    private ArrayList<String> options; 
+    private ArrayList<String> choices; 
     private String correctAnswer; 
     
-    //no options
-    public Question(String questionId, String text, String correctAnswer) {
-        this.questionId = questionId;
-        this.text = text;
-        this.correctAnswer = correctAnswer;
-        this.options = new ArrayList<>();
-    }
-    
-    //with options
     public Question(String questionId, String text, ArrayList<String> options, String correctAnswer) {
         this.questionId = questionId;
         this.text = text;
-        this.options = options;
+        this.choices = options;
         this.correctAnswer = correctAnswer;
     }
 
@@ -40,8 +31,8 @@ public class Question {
         return text;
     }
 
-    public ArrayList<String> getOptions() {
-        return options;
+    public ArrayList<String> getChoices() {
+        return choices;
     }
 
     public String getCorrectAnswer() {
@@ -55,7 +46,7 @@ public class Question {
     }
 
     public void setOptions(ArrayList<String> options) {
-        this.options = options;
+        this.choices = options;
     }
 
     public void setCorrectAnswer(String correctAnswer) {
@@ -63,12 +54,12 @@ public class Question {
     }
     
     public void addOption(String option) {
-        if (!options.contains(option)) {
-            options.add(option);
+        if (!choices.contains(option)) {
+            choices.add(option);
         }
     }
 
     public void removeOption(String option) {
-        options.remove(option);
+        choices.remove(option);
     }
 }

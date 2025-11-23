@@ -202,6 +202,14 @@ SwingUtilities.getWindowAncestor(this).dispose();
     model1.setRowCount(0);  // Clear table
 
     for (Course c : allCourses) {
+        
+        if (c.getStatus() != Course.Status.APPROVED) {
+            continue;  
+        }
+        
+        if (currentStudent.getEnrolledCourses().contains(c.getCourseId())) {
+            continue;
+        }
 
         // Get instructor name by instructorId
         String instructorName = "";

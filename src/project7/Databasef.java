@@ -73,7 +73,18 @@ public class Databasef {
                 for (int j = 0; j < enrolled.length(); j++) {
                     s.getEnrolledCourses().add(enrolled.getString(j));
                 }
-
+JSONObject lessonCompletedObj = o.optJSONObject("lessonCompleted");
+    if (lessonCompletedObj != null) {
+        for (String key : lessonCompletedObj.keySet()) {
+            s.getLessonCompleted().put(key, lessonCompletedObj.getBoolean(key));
+        }
+    }
+    JSONObject quizResultsObj = o.optJSONObject("quizResults");
+    if (quizResultsObj != null) {
+        for (String key : quizResultsObj.keySet()) {
+            s.getQuizResults().put(key, quizResultsObj.getInt(key));
+        }
+    }
                 JSONObject prog = o.getJSONObject("progress");
                 for (String courseId : prog.keySet()) {
                     JSONArray completedLessons = prog.getJSONArray(courseId);
@@ -153,7 +164,21 @@ public class Databasef {
 
             if (u instanceof Student s) {
                 o.put("enrolledCourses", s.getEnrolledCourses());
-                o.put("progress", s.getProgress());
+                o.put("progress", s.getProgress()); 
+                JSONObject lessonCompletedObj = new JSONObject();
+    for (String key : s.getLessonCompleted().keySet()) {
+        lessonCompletedObj.put(key, s.getLessonCompleted().get(key));
+    }
+    o.put("lessonCompleted", lessonCompletedObj);
+            
+            JSONObject quizResultsObj = new JSONObject();
+    for (String key : s.getQuizResults().keySet()) {
+        quizResultsObj.put(key, s.getQuizResults().get(key));
+    }
+    o.put("quizResults", quizResultsObj);
+            o.put("progress", s.getProgress());
+            
+               
                 
                 JSONArray certArr = new JSONArray();
                 for(Certificate cert : s.getCertificates())
@@ -224,15 +249,12 @@ public class Databasef {
                         L.getString("title"),
                         L.getString("content")
                 );
-                JSONArray quizzesArr = L.optJSONArray("quizzes");  // لو موجود
-    if (quizzesArr != null) {
-        for (int k = 0; k < quizzesArr.length(); k++) {
-            JSONObject Qz = quizzesArr.getJSONObject(k);
+                JSONObject Qz = L.optJSONObject("quiz");
+            if (Qz != null) {
             Quiz quiz = new Quiz(
                 Qz.getString("quizId"),
                 Qz.getString("title"),
                 new ArrayList<>(),  // questions هيتضافوا بعدين
-                Qz.optInt("maxRetries", 1),
                 l.getLessonId()
             );
             // قراءة الـ Questions
@@ -256,8 +278,7 @@ public class Databasef {
                     quiz.addQuestion(question);
                 }
             }
-            l.addQuiz(quiz);
-        }
+            l.setQuiz(quiz);
     }
                 
                 c.addLesson(l);
@@ -316,8 +337,8 @@ for (int j = 0; j < st.length(); j++) {
 
 
                 JSONArray quizzesArray = new JSONArray();
-                if (ls.getQuizzes() != null) {
-                    for (Quiz q : ls.getQuizzes()) {
+                if (ls.getQuiz() != null) {
+                        Quiz q = ls.getQuiz();
                         JSONObject quizObj = new JSONObject();
                         quizObj.put("quizId", q.getQuizId());
                         quizObj.put("title", q.getTitle());
@@ -331,14 +352,14 @@ for (int j = 0; j < st.length(); j++) {
                                 JSONObject quesObj = new JSONObject();
                                 quesObj.put("questionId", ques.getQuestionId());
                                 quesObj.put("text", ques.getText());
-                                quesObj.put("options", ques.getOptions());
+                                quesObj.put("options", ques.getChoices());
                                 quesObj.put("correctAnswer", ques.getCorrectAnswer());
                                 questionsArray.put(quesObj);
                             }
                         }
                         quizObj.put("questions", questionsArray);
                         quizzesArray.put(quizObj);
-                    }
+                    
                 }
                 obj.put("quizzes", quizzesArray);
                 L.put(obj);
@@ -440,6 +461,14 @@ for (int j = 0; j < st.length(); j++) {
             o.getString("studentId"),
             o.getInt("attemptNumber")
         );
+        
+        JSONArray scoresArr = o.optJSONArray("scores");
+        if (scoresArr != null) {
+            for (int j = 0; j < scoresArr.length(); j++) {
+                attempt.addScore(scoresArr.getInt(j));
+            }
+        }
+        
         JSONObject ans = o.getJSONObject("answers");
         for (String qId : ans.keySet()) {
             attempt.addAnswer(qId, ans.getString(qId));
@@ -449,6 +478,92 @@ for (int j = 0; j < st.length(); j++) {
     }
     return attempts;
 }
+    
+    public static void writeQuizAttempts(ArrayList<QuizAttempt> attempts) {
+    JSONArray arr = new JSONArray();
+    for (QuizAttempt a : attempts) {
+        JSONObject o = new JSONObject();
+        o.put("attemptId", a.getAttemptId());
+        o.put("quizId", a.getQuizId());
+        o.put("studentId", a.getStudentId());
+        o.put("attemptNumber", a.getAttemptNumber());
+        JSONArray scoresArr = new JSONArray();
+        for (int score : a.getScores()) {
+            scoresArr.put(score);
+        }
+        o.put("scores", scoresArr);
+        
+        JSONObject answers = new JSONObject();
+        for (String qId : a.getAnswers().keySet()) {
+            answers.put(qId, a.getAnswers().get(qId));
+        }
+        o.put("answers", answers);
+        arr.put(o);
+    }
+    writeFile(QUIZ_ATTEMPTS_FILE, arr.toString(4));
+}
+    
+    public void addQuizToLesson(String courseId, String lessonId, Quiz quiz) {
+    ArrayList<Course> courses = readCourses();
+
+    for (Course c : courses) {
+        if (c.getCourseId().equals(courseId)) {
+
+            for (Lesson ls : c.getLessons()) {
+                if (ls.getLessonId().equals(lessonId)) {
+
+                    ls.setQuiz(quiz);  // أهو هنا
+
+                    writeCourses(courses); // و هنا بنكتب كل حاجة في الملف
+                    return;
+                }
+            }
+        }
+    }
+}
+ 
+    public QuizAttempt startOrGetNewAttempt(String studentId, String quizId) {
+    ArrayList<QuizAttempt> allAttempts = readQuizAttempts();
+    int maxRetries = 2;
+
+    // ندور على attempt موجود مسبقًا
+    for (QuizAttempt a : allAttempts) {
+        if (a.getStudentId().equals(studentId) && a.getQuizId().equals(quizId)) {
+            if (a.getAttemptNumber() < maxRetries) {
+                // مجرد ما الطالب يعمل attempt جديد، هنضيفه score لاحقًا عند submit
+                return a;
+            } else {
+                return null; // عدد المحاولات وصل الحد الأقصى
+            }
+        }
+    }
+
+    // لو مفيش attempt سابق
+    QuizAttempt newAttempt = new QuizAttempt(
+        "ATT-" + System.currentTimeMillis(),
+        quizId,
+        studentId,
+        1 // 0 لسه ما عملش أي attempt
+    );
+    allAttempts.add(newAttempt);
+    writeQuizAttempts(allAttempts);
+    return newAttempt;
+}
+
+
+    public void saveAttemptScore(String attemptId, int score) {
+    ArrayList<QuizAttempt> allAttempts = readQuizAttempts();
+
+    for (QuizAttempt a : allAttempts) {
+        if (a.getAttemptId().equals(attemptId)) {
+            a.addScore(score);
+            break;
+        }
+    }
+
+    writeQuizAttempts(allAttempts);
+}
+
 
     // =====================================================================
     public void addCourse(Course newCourse) {
@@ -469,6 +584,17 @@ for (int j = 0; j < st.length(); j++) {
 
         writeCourses(courses);
     }
+    
+    public void updateStudent(Student student) {
+    ArrayList<User> allUsers = readUsers();
+    for (int i = 0; i < allUsers.size(); i++) {
+        if (allUsers.get(i).getId().equals(student.getId())) {
+            allUsers.set(i, student); // replace the old student with the updated one
+            break;
+        }
+    }
+    writeUsers(allUsers); // save changes to users.json
+}
 
     public ArrayList<Course> loadCoursesByInstructor(String instructorId) {
         ArrayList<Course> all = readCourses();
@@ -513,5 +639,147 @@ for (int j = 0; j < st.length(); j++) {
     public static boolean isValidPassword(String password) {
         return password != null && password.length() >= 3;
     }
+
+
+public static JSONObject getCourseStatistics(String courseId) {
+
+    // Read database
+    ArrayList<Course> courses = Databasef.readCourses();
+    ArrayList<User> users = Databasef.readUsers();
+
+    Course selected = null;
+
+    // Find course
+    for (Course c : courses) {
+        if (c.getCourseId().equals(courseId)) {
+            selected = c;
+            break;
+        }
+    }
+
+    if (selected == null) {
+        JSONObject error = new JSONObject();
+        error.put("error", "Course not found");
+        return error;
+    }
+
+    // ============================
+    // COURSE LEVEL STATISTICS
+    // ============================
+
+    int totalStudents = selected.getStudents().size();
+    int totalLessons = selected.getLessons().size();
+
+    // Count completed lessons by all students
+    int completedCount = 0;
+
+    for (User u : users) {
+        if (u instanceof Student s) {
+            if (s.getProgress().containsKey(courseId)) {
+                completedCount += s.getProgress().get(courseId).size();
+            }
+        }
+    }
+
+    double avgCompletion = 0.0;
+    if (totalStudents > 0 && totalLessons > 0) {
+        avgCompletion = (completedCount * 100.0) / (totalStudents * totalLessons);
+    }
+
+    // ============================
+    // LESSON LEVEL STATISTICS
+    // ============================
+
+    JSONArray lessonsArray = new JSONArray();
+
+    for (Lesson lesson : selected.getLessons()) {
+
+        int lessonCompleted = 0;
+
+        for (User u : users) {
+            if (u instanceof Student s) {
+                if (s.getProgress().containsKey(courseId)) {
+                    if (s.getProgress().get(courseId).contains(lesson.getLessonId())) {
+                        lessonCompleted++;
+                    }
+                }
+            }
+        }
+
+        JSONObject lessonObj = new JSONObject();
+        lessonObj.put("lessonId", lesson.getLessonId());
+        lessonObj.put("title", lesson.getTitle());
+        lessonObj.put("completedBy", lessonCompleted);
+
+        lessonsArray.put(lessonObj);
+    }
+
+    // ============================
+    // FINAL RESULT JSON
+    // ============================
+
+    JSONObject result = new JSONObject();
+    result.put("courseId", courseId);
+    result.put("title", selected.getTitle());
+    result.put("totalStudents", totalStudents);
+    result.put("totalLessons", totalLessons);
+    result.put("averageCompletion", avgCompletion);
+    result.put("lessonsPerformance", lessonsArray);
+
+    return result;
+}
+
+
+
+
+public static void synchronizeData(ArrayList<User> users, ArrayList<Course> courses) {
+
+    // 1. مسح الـ enrolledCourses لكل students
+    for (User u : users) {
+        if (u instanceof Student s) {
+            s.getEnrolledCourses().clear();
+        }
+    }
+
+    // 2. مسح الطلاب من كل course
+    for (Course c : courses) {
+        c.getStudents().clear();
+    }
+
+    // 3. ربط البيانات من الأول: based on progress
+    for (User u : users) {
+        if (u instanceof Student s) {
+
+            for (Course c : courses) {
+
+                // لو الطالب عنده progress في الكورس
+                if (s.getProgress().containsKey(c.getCourseId())) {
+
+                    // أضف courseId للـ student
+                    if (!s.getEnrolledCourses().contains(c.getCourseId())) {
+                        s.getEnrolledCourses().add(c.getCourseId());
+                    }
+
+                    // أضف student للـ course
+                    if (!c.getStudents().contains(s)) {
+                        c.getStudents().add(s);
+                    }
+                }
+            }
+        }
+    }
+
+    // 4. حفظ الملفات بعد التزامن
+    writeUsers(users);
+    writeCourses(courses);
+}
+
+
+
+
+
+
+
+
     
 }
