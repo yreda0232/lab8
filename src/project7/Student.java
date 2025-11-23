@@ -56,7 +56,6 @@ public class Student extends User {
         return progress.containsKey(courseId) 
                 && progress.get(courseId).contains(lessonId);
     }
-
     
     public boolean hasCompletedCourse(Course c) {
     if (!progress.containsKey(c.getCourseId())) return false;
