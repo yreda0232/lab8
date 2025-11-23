@@ -11,6 +11,7 @@ public class Databasef {
 
     private static final String USERS_FILE = "users.json";
     private static final String COURSES_FILE = "courses.json";
+    private static final String QUIZ_ATTEMPTS_FILE = "quizAttempts.json";
     private ArrayList<User> users;
 
     public Databasef() {
@@ -300,6 +301,27 @@ for (int j = 0; j < st.length(); j++) {
         }
         return instructorCourses;
     }
+    
+    public static ArrayList<QuizAttempt> readQuizAttempts() {
+    ArrayList<QuizAttempt> attempts = new ArrayList<>();
+    JSONArray arr = new JSONArray(readFile(QUIZ_ATTEMPTS_FILE));
+    for (int i = 0; i < arr.length(); i++) {
+        JSONObject o = arr.getJSONObject(i);
+        QuizAttempt attempt = new QuizAttempt(
+            o.getString("attemptId"),
+            o.getString("quizId"),
+            o.getString("studentId"),
+            o.getInt("attemptNumber")
+        );
+        JSONObject ans = o.getJSONObject("answers");
+        for (String qId : ans.keySet()) {
+            attempt.addAnswer(qId, ans.getString(qId));
+        }
+        attempt.setScore(o.getInt("score"));
+        attempts.add(attempt);
+    }
+    return attempts;
+}
 
     // =====================================================================
     public void addCourse(Course newCourse) {
@@ -364,4 +386,5 @@ for (int j = 0; j < st.length(); j++) {
     public static boolean isValidPassword(String password) {
         return password != null && password.length() >= 3;
     }
+    
 }
