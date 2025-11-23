@@ -57,7 +57,6 @@ public class Lesson {
         return resources;
     }
     
-    public Quiz getQuiz() { return quiz; }
 
     // Setters
     public void setTitle(String title) {
@@ -84,9 +83,7 @@ public class Lesson {
         this.resources = resources;
     }
 
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
+  
     
     
 
