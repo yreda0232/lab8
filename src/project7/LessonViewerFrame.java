@@ -64,7 +64,6 @@ public class LessonViewerFrame extends javax.swing.JPanel {
 
     // Load student for progress check
     ArrayList<User> users = Databasef.readUsers();
-    Student currentStudent = null;
 
     for (User u : users) {
         if (u instanceof Student) {
@@ -97,6 +96,64 @@ public class LessonViewerFrame extends javax.swing.JPanel {
         });
     }
 }
+    
+    
+    private void markLessonCompleted()
+    {
+        int row = jTable1.getSelectedRow();
+        if(row == -1)
+        {
+            JOptionPane.showMessageDialog(this, "Select a lesson first!");
+        return;
+        }
+        
+        String lessonId = jTable1.getValueAt(row, 0).toString();
+        
+        currentStudent.markLessonCompleted(courseId, lessonId);
+        
+        ArrayList<User> users = Databasef.readUsers();
+        for(User u : users)
+        {
+            if(u instanceof Student s && s.getId().equals(currentStudent.getId()))
+                s.getProgress().putAll(currentStudent.getProgress());
+        }
+        
+        Databasef.writeUsers(users);
+        
+        JOptionPane.showMessageDialog(this, "Lesson marked as completed!");
+        
+        loadLessons();
+        
+        ArrayList<Course> all = Databasef.readCourses();
+        Course finishCourse = null;
+        
+        for(Course c : all)
+        {
+            if(c.getCourseId().equals(courseId))
+            {
+                finishCourse = c;
+                break;
+            }
+        }
+        
+        if(finishCourse != null && currentStudent.hasCompletedCourse(finishCourse))
+        {
+            Certificate cert = db.generateCertificate(currentStudent.getId(), courseId);
+            currentStudent.getCertificates().add(cert);
+            
+            users = Databasef.readUsers();
+            for(User u :users)
+            {
+                if(u instanceof Student s && s.getId().equals(currentStudent.getId()))
+                    s.getCertificates().add(cert);
+            }
+            Databasef.writeUsers(users);
+            
+            JOptionPane.showMessageDialog(this,"🎉 Congratulations! You completed the entire course!\nA certificate has been issued.");
+        }
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -110,6 +167,7 @@ public class LessonViewerFrame extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -133,6 +191,13 @@ public class LessonViewerFrame extends javax.swing.JPanel {
             }
         });
 
+        jButton2.setText("Mark as Completed");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -144,13 +209,19 @@ public class LessonViewerFrame extends javax.swing.JPanel {
                 .addGap(360, 360, 360)
                 .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(196, 196, 196))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(76, 76, 76)
+                .addGap(46, 46, 46)
+                .addComponent(jButton2)
+                .addGap(7, 7, 7)
                 .addComponent(jButton1)
                 .addContainerGap(179, Short.MAX_VALUE))
         );
@@ -162,10 +233,15 @@ public class LessonViewerFrame extends javax.swing.JPanel {
     SwingUtilities.getWindowAncestor(this).dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        markLessonCompleted();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
 
         
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables

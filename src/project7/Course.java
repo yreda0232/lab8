@@ -94,6 +94,10 @@ public Lesson getLessonById(String lessonId) {
 
     
     
+    public String getLastModifiedBy() {return lastModifiedBy;}
+
+    public String getLastStatusChange() {return lastStatusChange;}
+    
     
     public void editCourse(String newTitle, String newDescription, String newInstructorId) {
         if (newTitle != null) this.title = newTitle;
