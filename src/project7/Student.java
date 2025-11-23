@@ -16,6 +16,7 @@ public class Student extends User {
     private ArrayList<String> enrolledCourses;
     private HashMap<String, ArrayList<String>> progress;
     private ArrayList<Certificate> certificates = new ArrayList<>();
+    private HashMap<String, QuizResults> quizResults = new HashMap<>();
 
     public Student(String id, String name, String email, String passwordHash) {
         super(id, name, email, passwordHash, "student");
@@ -64,7 +65,13 @@ public class Student extends User {
     return completedLessons.size() == c.getLessons().size();
 }
 
+    
+    public HashMap<String, QuizResults> getQuizResults() {
+        return quizResults;
+    }
 
+
+    
     public String getName() {
         return name;
     }
@@ -90,4 +97,12 @@ public class Student extends User {
     public ArrayList<Certificate> getCertificates() {return certificates;}
             
 
+
+
+
+
+
+public void addQuizResult(String lessonId, QuizResults result) {
+    quizResults.put(lessonId, result);
+}
 }
