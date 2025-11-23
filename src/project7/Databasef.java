@@ -11,6 +11,7 @@ public class Databasef {
 
     private static final String USERS_FILE = "users.json";
     private static final String COURSES_FILE = "courses.json";
+    private static final String QUIZ_ATTEMPTS_FILE = "quizAttempts.json";
     private ArrayList<User> users;
 
     public Databasef() {
@@ -82,6 +83,23 @@ public class Databasef {
                     }
                     s.getProgress().put(courseId, lessonsList);
                 }
+                
+                if(o.has("certificates"))
+            {
+                JSONArray certArr = o.getJSONArray("certificates");
+                for(int k=0; k<certArr.length(); k++)
+                {
+                    JSONObject certObj = certArr.getJSONObject(k);
+                    
+                    Certificate cert = new Certificate(
+                            certObj.getString("certificateId"),
+                            o.getString("userId"),
+                            certObj.getString("courseId"),
+                            certObj.getString("issueDate")
+                    );
+                    s.getCertificates().add(cert);
+                }
+            }
 
                 users.add(s);
             } else if (o.getString("role").equals("instructor")) {
@@ -104,6 +122,19 @@ public class Databasef {
 
                 users.add(ins);
             }
+            else if(o.getString("role").equals("admin"))
+            {
+                Admin a =new Admin(
+                        o.getString("userId"),
+                        o.getString("username"),
+                        o.getString("email"),
+                        o.getString("passwordHash")
+                );
+                users.add(a);
+            }
+            
+            
+
         }
 
         return users;
@@ -123,6 +154,17 @@ public class Databasef {
             if (u instanceof Student s) {
                 o.put("enrolledCourses", s.getEnrolledCourses());
                 o.put("progress", s.getProgress());
+                
+                JSONArray certArr = new JSONArray();
+                for(Certificate cert : s.getCertificates())
+                {
+                    JSONObject certObj = new JSONObject();
+                    certObj.put("certificateId", cert.getCertificateId());
+                    certObj.put("courseId", cert.getCourseId());
+                    certObj.put("issueDate", cert.getIssueDate());
+                    
+                }
+                o.put("certifiacte", certArr);
             }
 
             if (u instanceof Instructor i) {
@@ -145,16 +187,33 @@ public class Databasef {
     public static ArrayList<Course> readCourses() {
         ArrayList<Course> courses = new ArrayList<>();
         JSONArray arr = new JSONArray(readFile(COURSES_FILE));
+        
 
         for (int i = 0; i < arr.length(); i++) {
             JSONObject o = arr.getJSONObject(i);
+
+            String statusStr = "PENDING";
+            if (o.has("status") && !o.isNull("status")) {
+                statusStr = String.valueOf(o.get("status"));
+            }
+
+            Course.Status status = Course.Status.valueOf(statusStr);
 
             Course c = new Course(
                     o.getString("courseId"),
                     o.getString("title"),
                     o.getString("description"),
-                    o.getString("instructorId")
+                    o.getString("instructorId"),
+                    status
             );
+            String status = o.optString("status", "PENDING");
+            String lastMod = o.optString("lastModifiedBy", "");
+            String lastChange = o.optString("lastStatusChange", "");
+
+            c.setStatus(CourseStatus.valueOf(status));
+            c.setLastModifiedBy(lastMod);
+            c.setLastStatusChange(lastChange);
+
 
             JSONArray lessons = o.getJSONArray("lessons");
             for (int j = 0; j < lessons.length(); j++) {
@@ -164,6 +223,42 @@ public class Databasef {
                         L.getString("title"),
                         L.getString("content")
                 );
+                JSONArray quizzesArr = L.optJSONArray("quizzes");  // لو موجود
+    if (quizzesArr != null) {
+        for (int k = 0; k < quizzesArr.length(); k++) {
+            JSONObject Qz = quizzesArr.getJSONObject(k);
+            Quiz quiz = new Quiz(
+                Qz.getString("quizId"),
+                Qz.getString("title"),
+                new ArrayList<>(),  // questions هيتضافوا بعدين
+                Qz.optInt("maxRetries", 1),
+                l.getLessonId()
+            );
+            // قراءة الـ Questions
+            JSONArray questionsArr = Qz.optJSONArray("questions");
+            if (questionsArr != null) {
+                for (int q = 0; q < questionsArr.length(); q++) {
+                    JSONObject qs = questionsArr.getJSONObject(q);
+                    ArrayList<String> options = new ArrayList<>();
+                    JSONArray opts = qs.optJSONArray("options");
+                    if (opts != null) {
+                        for (int m = 0; m < opts.length(); m++) {
+                            options.add(opts.getString(m));
+                        }
+                    }
+                    Question question = new Question(
+                        qs.getString("questionId"),
+                        qs.getString("text"),
+                        options,
+                        qs.getString("correctAnswer")
+                    );
+                    quiz.addQuestion(question);
+                }
+            }
+            l.addQuiz(quiz);
+        }
+    }
+                
                 c.addLesson(l);
             }
 
@@ -194,15 +289,48 @@ for (int j = 0; j < st.length(); j++) {
             o.put("title", c.getTitle());
             o.put("description", c.getDescription());
             o.put("instructorId", c.getInstructorId());
+            o.put("status", c.getStatus().name());
+            o.put("lastModifiedBy", c.getLastModifiedBy());
+            o.put("lastStatusChange", c.getLastStatusChange());
 
-            JSONArray L = new JSONArray();
+            
+             JSONArray L = new JSONArray();
             for (Lesson ls : c.getLessons()) {
                 JSONObject obj = new JSONObject();
                 obj.put("lessonId", ls.getLessonId());
                 obj.put("title", ls.getTitle());
                 obj.put("content", ls.getContent());
+                obj.put("resources", ls.getResources());
+
+
+                JSONArray quizzesArray = new JSONArray();
+                if (ls.getQuizzes() != null) {
+                    for (Quiz q : ls.getQuizzes()) {
+                        JSONObject quizObj = new JSONObject();
+                        quizObj.put("quizId", q.getQuizId());
+                        quizObj.put("title", q.getTitle());
+                        quizObj.put("lessonId", q.getLessonId());
+                        quizObj.put("maxRetries", q.getMaxRetries());
+
+                        // إضافة الأسئلة داخل الـ Quiz
+                        JSONArray questionsArray = new JSONArray();
+                        if (q.getQuestions() != null) {
+                            for (Question ques : q.getQuestions()) {
+                                JSONObject quesObj = new JSONObject();
+                                quesObj.put("questionId", ques.getQuestionId());
+                                quesObj.put("text", ques.getText());
+                                quesObj.put("options", ques.getOptions());
+                                quesObj.put("correctAnswer", ques.getCorrectAnswer());
+                                questionsArray.put(quesObj);
+                            }
+                        }
+                        quizObj.put("questions", questionsArray);
+                        quizzesArray.put(quizObj);
+                    }
+                }
+                obj.put("quizzes", quizzesArray);
                 L.put(obj);
-            }
+                }
             o.put("lessons", L);
 
             o.put("students", c.getStudents());
@@ -212,6 +340,97 @@ for (int j = 0; j < st.length(); j++) {
 
         writeFile(COURSES_FILE, arr.toString(4));
     }
+    
+    public ArrayList<Course> readCoursesForInstructor(String instructorId) {
+        ArrayList<Course> allCourses = readCourses();
+        ArrayList<Course> instructorCourses = new ArrayList<>();
+        for (Course c : allCourses) {
+            if (c.getInstructorId().equals(instructorId)) {
+                instructorCourses.add(c);
+            }
+        }
+        return instructorCourses;
+    }
+    
+    public ArrayList<Course> getPendingCourses()
+    {
+        ArrayList<Course> all =readCourses();
+        ArrayList<Course> pending =new ArrayList<>();
+        
+        for(Course c : all)
+        {
+            if(c.getStatus() == Course.Status.PENDING)
+                pending.add(c);
+        }
+        
+        return pending;
+    }
+    
+    public boolean approveCourse(String courseId)
+    {
+        ArrayList<Course> courses = readCourses();
+        boolean changed = false;
+        
+        for(Course c : courses)
+        {
+            if(c.getCourseId().equals(courseId))
+            {
+                c.setStatus(Course.Status.APPROVED);
+                changed = true;
+                break;
+            }
+        }
+        if(changed) writeCourses(courses);
+        return changed;
+    }
+    
+    public boolean rejectCourse(String courseId)
+    {
+        ArrayList<Course> courses = readCourses();
+        boolean changed = false;
+        
+        for(Course c : courses)
+        {
+            if(c.getCourseId().equals(courseId))
+            {
+                c.setStatus(Course.Status.REJECTED);
+                changed = true;
+                break;
+            }
+        }
+        if(changed) writeCourses(courses);
+        return changed;
+    }
+    
+    // hena beygenerate Certificate Automatically
+    public Certificate generateCertificate(String studentId, String courseId) {
+    String certId = "CERT-" + System.currentTimeMillis();
+    String date = java.time.LocalDate.now().toString();
+
+    return new Certificate(certId, studentId, courseId, date);
+}
+
+
+    public static ArrayList<QuizAttempt> readQuizAttempts() {
+    ArrayList<QuizAttempt> attempts = new ArrayList<>();
+    JSONArray arr = new JSONArray(readFile(QUIZ_ATTEMPTS_FILE));
+    for (int i = 0; i < arr.length(); i++) {
+        JSONObject o = arr.getJSONObject(i);
+        QuizAttempt attempt = new QuizAttempt(
+            o.getString("attemptId"),
+            o.getString("quizId"),
+            o.getString("studentId"),
+            o.getInt("attemptNumber")
+        );
+        JSONObject ans = o.getJSONObject("answers");
+        for (String qId : ans.keySet()) {
+            attempt.addAnswer(qId, ans.getString(qId));
+        }
+        attempt.setScore(o.getInt("score"));
+        attempts.add(attempt);
+    }
+    return attempts;
+}
 
     // =====================================================================
     public void addCourse(Course newCourse) {
@@ -418,4 +637,5 @@ public static void synchronizeData(ArrayList<User> users, ArrayList<Course> cour
 
 
 
+    
 }

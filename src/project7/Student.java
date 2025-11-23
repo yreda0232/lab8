@@ -15,6 +15,7 @@ public class Student extends User {
 
     private ArrayList<String> enrolledCourses;
     private HashMap<String, ArrayList<String>> progress;
+    private ArrayList<Certificate> certificates = new ArrayList<>();
 
     public Student(String id, String name, String email, String passwordHash) {
         super(id, name, email, passwordHash, "student");
@@ -54,6 +55,15 @@ public class Student extends User {
     public HashMap<String, ArrayList<String>> getProgress() {
         return progress;
     }
+    
+    public boolean hasCompletedCourse(Course c) {
+    if (!progress.containsKey(c.getCourseId())) return false;
+
+    ArrayList<String> completedLessons = progress.get(c.getCourseId());
+
+    return completedLessons.size() == c.getLessons().size();
+}
+
 
     public String getName() {
         return name;
@@ -77,6 +87,7 @@ public class Student extends User {
 }
 
     
-    
+    public ArrayList<Certificate> getCertificates() {return certificates;}
+            
 
 }

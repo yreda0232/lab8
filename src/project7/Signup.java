@@ -105,7 +105,7 @@ public class Signup extends javax.swing.JPanel {
 
         jLabel5.setText("Choose your role:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select", "student", "instructor" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select", "student", "instructor", "admin" }));
 
         jLabel1.setText("Enter your Id:");
 

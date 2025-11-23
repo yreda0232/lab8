@@ -125,16 +125,25 @@ public class InstructorFrame extends javax.swing.JFrame {
     frame.pack();
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
+    dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-       ViewStudentsForm studentsForm = new ViewStudentsForm(instructor,db);
+      ViewStudentsForm studentsForm = new ViewStudentsForm(instructor,db);
+   JFrame frame = new JFrame("View Enrolled Students");
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame.getContentPane().add(studentsForm);
+    frame.pack();
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
+   dispose();
    studentsForm.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         EditCourseFrame editForm = new EditCourseFrame(instructor,db);
     editForm.setVisible(true);
+    dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -148,6 +157,8 @@ public class InstructorFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+       MainMenuFrame mainMenu=new MainMenuFrame();
+        mainMenu.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 

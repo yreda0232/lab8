@@ -13,6 +13,12 @@ public class Instructor extends User {
         this.createdCourses = new ArrayList<>(); 
     }
 
+    public void setCreatedCourses(ArrayList<Course> createdCourses) {
+        this.createdCourses = createdCourses;
+    }
+    
+    
+
     public ArrayList<Course> getCreatedCourses() {
         return createdCourses;
     }

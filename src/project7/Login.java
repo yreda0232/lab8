@@ -70,8 +70,11 @@ public class Login extends javax.swing.JPanel {
             
             StudentService service = new StudentService();
             StudentDashboardFrame frame = new StudentDashboardFrame((Student) user,service, db);
-           // frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+        }
+        else if (user.getRole().equals("admin")) {
+            AdminDashboardFrame af = new AdminDashboardFrame();
+            af.setVisible(true);
         }
         else
         {
@@ -120,7 +123,7 @@ public class Login extends javax.swing.JPanel {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel3.setText("Choose your role:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select", "student", "instructor" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select", "student", "instructor", "admin" }));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel4.setText("Login");
