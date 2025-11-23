@@ -12,6 +12,7 @@ public class Lesson {
     private String title;
     private String content;
     private ArrayList<String> resources;
+    private Quiz quiz;
     private ArrayList<Quiz> quizzes;
 
     // Constructor بدون resources
@@ -55,6 +56,8 @@ public class Lesson {
     public ArrayList<String> getResources() {
         return resources;
     }
+    
+    public Quiz getQuiz() { return quiz; }
 
     // Setters
     public void setTitle(String title) {
@@ -64,6 +67,7 @@ public class Lesson {
     public void setContent(String content) {
         this.content = content;
     }
+    public void setQuiz(Quiz quiz) { this.quiz = quiz; }
 
     // Manage Resources
     public void addResource(String resource) {

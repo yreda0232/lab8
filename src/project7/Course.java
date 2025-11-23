@@ -43,6 +43,21 @@ public class Course {
         this(courseId, title, description, instructorId);
         if (status != null) this.status = status;
     }
+public int getTotalLessons() {
+    return lessons.size();
+}
+    public ArrayList<Lesson> getLessons() {
+        return lessons;
+    }
+public Lesson getLessonById(String lessonId) {
+    for (Lesson l : lessons) {
+        if (l.getLessonId().equals(lessonId)) return l;
+    }
+    return null;
+}
+    public ArrayList<Student> getStudents() {
+        return students;
+    }
 
     // ----------------- GETTERS -----------------
     public String getCourseId() {return courseId;}
@@ -91,22 +106,17 @@ public class Course {
         }
     }
 
-   
-
-    
     public void addLesson(Lesson lesson) {
         if (!lessons.contains(lesson)) {
             lessons.add(lesson);
         }
     }
 
-    
     public void addStudent(Student s) {
         if (!students.contains(s)) {
             students.add(s);
         }
     }
-
     
     public ArrayList<String> getStudentIds() {
         ArrayList<String> ids = new ArrayList<>();

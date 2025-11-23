@@ -91,13 +91,10 @@ db.writeUsers(users);
     // ------------------------------------------------------------
     // 5) Mark lesson completed
     // ------------------------------------------------------------
-    public void markLessonCompleted(Student student, String courseId, String lessonId) {
-
+   public void markLessonCompleted(Student student, String courseId, String lessonId) {
         student.markLessonCompleted(courseId, lessonId);
-
         // تحديث بيانات الطالب
         ArrayList<User> users = db.readUsers();
-
 // ندور على الطالب اللي عايزين نعدّل بياناته
 for (int i = 0; i < users.size(); i++) {
     if (users.get(i).getId().equals(student.getId())) {
@@ -105,11 +102,12 @@ for (int i = 0; i < users.size(); i++) {
         break;
     }
 }
-
 // حفظ كل المستخدمين بعد التعديل
 db.writeUsers(users);
-
     }
+    
+
+
 
     // ------------------------------------------------------------
     // 6) Check if lesson is completed (for UI)
