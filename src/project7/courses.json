@@ -1,30 +1,20 @@
 [
     {
-        "description": "Introduction to Java programming",
-        "students": [{
-            "role": "student",
-            "enrolledCourses": ["C1"],
-            "name": "youssef",
-            "progress": {},
-            "id": "9627",
-            "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-            "email": "youssef123@gmail.com"
-        }],
-        "title": "Java Basics",
-        "courseId": "C1",
+        "description": "testtest",
+        "students": [],
+        "title": "test",
+        "courseId": "123",
         "instructorId": "9375",
-        "lessons": [{
-            "lessonId": "L1",
-            "title": "Introduction",
-            "content": "Welcome to Java!"
-        }]
+        "status": "REJECTED",
+        "lessons": []
     },
     {
-        "description": "Object Oriented Programming",
+        "description": "testtest",
         "students": [],
-        "title": "OOP",
-        "courseId": "C2",
-        "instructorId": "I2",
+        "title": "test2",
+        "courseId": "321",
+        "instructorId": "9375",
+        "status": "REJECTED",
         "lessons": []
     }
 ]

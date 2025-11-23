@@ -50,7 +50,11 @@ public class AuthService {
         {
             newUser = new Student(id, name, email, hashed);
         }
-        else
+        else if(role.equalsIgnoreCase("admin"))
+            {
+                newUser = new Admin(id, name, email, hashed);
+            }
+        else 
         {
             newUser = new Instructor(id, name, email, hashed);
         }

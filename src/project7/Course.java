@@ -15,6 +15,8 @@ package project7;
 import java.util.ArrayList;
 
 public class Course {
+    
+     public enum Status { PENDING, APPROVED, REJECTED }
 
     private String courseId;
     private String title;
@@ -22,6 +24,9 @@ public class Course {
     private String instructorId;
     private ArrayList<Lesson> lessons;
     private ArrayList<Student> students;
+    private Status status = Status.PENDING;
+    private String lastModifiedBy;
+    private String lastStatusChange;
 
     public Course(String courseId, String title, String description, String instructorId) {
         this.courseId = courseId;
@@ -30,49 +35,44 @@ public class Course {
         this.instructorId = instructorId;
         this.lessons = new ArrayList<Lesson>();
         this.students = new ArrayList<Student>();
+        this.status = Status.PENDING;
+    }
+    
+     public Course(String courseId, String title, String description, String instructorId, Status status) {
+        this(courseId, title, description, instructorId);
+        if (status != null) this.status = status;
     }
 
     // ----------------- GETTERS -----------------
-    public String getCourseId() {
-        return courseId;
-    }
+    public String getCourseId() {return courseId;}
 
-    public ArrayList<Lesson> getLessons() {
-        return lessons;
-    }
+    public ArrayList<Lesson> getLessons() {return lessons;}
 
-    public ArrayList<Student> getStudents() {
-        return students;
-    }
+    public ArrayList<Student> getStudents() {return students;}
 
-    public String getTitle() {
-        return title;
-    }
+    public String getTitle() {return title;}
 
+    public String getDescription() {return description;}
 
-    public String getDescription() {
-        return description;
-    }
+    public void setCourseId(String courseId) {this.courseId = courseId;}
 
-    public void setCourseId(String courseId) {
-        this.courseId = courseId;
-    }
+    public void setTitle(String title) {this.title = title;}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public void setDescription(String description) {this.description = description;}
   
-    public String getInstructorId() {
-        return instructorId;
-    }
+    public String getInstructorId() {return instructorId;}
 
-    public void setInstructorId(String instructorId) {
-        this.instructorId = instructorId;
-    }
+    public void setInstructorId(String instructorId) {this.instructorId = instructorId;}
+    
+    public void setStatus(Status status){this.status=status;}
+    
+    public Status getStatus(){return status;}
+
+    public void setLastModifiedBy(String lastModifiedBy) {this.lastModifiedBy = lastModifiedBy;}
+
+    public void setLastStatusChange(String lastStatusChange) {this.lastStatusChange = lastStatusChange;}
+    
+    
 
     
     public void editCourse(String newTitle, String newDescription, String newInstructorId) {
@@ -131,7 +131,9 @@ public class Course {
         }
         return null; 
 }
+    
+    
+    
 
 }
-
 
