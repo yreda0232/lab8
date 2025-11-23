@@ -276,4 +276,146 @@ for (int j = 0; j < st.length(); j++) {
     public static boolean isValidPassword(String password) {
         return password != null && password.length() >= 3;
     }
+
+
+public static JSONObject getCourseStatistics(String courseId) {
+
+    // Read database
+    ArrayList<Course> courses = Databasef.readCourses();
+    ArrayList<User> users = Databasef.readUsers();
+
+    Course selected = null;
+
+    // Find course
+    for (Course c : courses) {
+        if (c.getCourseId().equals(courseId)) {
+            selected = c;
+            break;
+        }
+    }
+
+    if (selected == null) {
+        JSONObject error = new JSONObject();
+        error.put("error", "Course not found");
+        return error;
+    }
+
+    // ============================
+    // COURSE LEVEL STATISTICS
+    // ============================
+
+    int totalStudents = selected.getStudents().size();
+    int totalLessons = selected.getLessons().size();
+
+    // Count completed lessons by all students
+    int completedCount = 0;
+
+    for (User u : users) {
+        if (u instanceof Student s) {
+            if (s.getProgress().containsKey(courseId)) {
+                completedCount += s.getProgress().get(courseId).size();
+            }
+        }
+    }
+
+    double avgCompletion = 0.0;
+    if (totalStudents > 0 && totalLessons > 0) {
+        avgCompletion = (completedCount * 100.0) / (totalStudents * totalLessons);
+    }
+
+    // ============================
+    // LESSON LEVEL STATISTICS
+    // ============================
+
+    JSONArray lessonsArray = new JSONArray();
+
+    for (Lesson lesson : selected.getLessons()) {
+
+        int lessonCompleted = 0;
+
+        for (User u : users) {
+            if (u instanceof Student s) {
+                if (s.getProgress().containsKey(courseId)) {
+                    if (s.getProgress().get(courseId).contains(lesson.getLessonId())) {
+                        lessonCompleted++;
+                    }
+                }
+            }
+        }
+
+        JSONObject lessonObj = new JSONObject();
+        lessonObj.put("lessonId", lesson.getLessonId());
+        lessonObj.put("title", lesson.getTitle());
+        lessonObj.put("completedBy", lessonCompleted);
+
+        lessonsArray.put(lessonObj);
+    }
+
+    // ============================
+    // FINAL RESULT JSON
+    // ============================
+
+    JSONObject result = new JSONObject();
+    result.put("courseId", courseId);
+    result.put("title", selected.getTitle());
+    result.put("totalStudents", totalStudents);
+    result.put("totalLessons", totalLessons);
+    result.put("averageCompletion", avgCompletion);
+    result.put("lessonsPerformance", lessonsArray);
+
+    return result;
+}
+
+
+
+
+public static void synchronizeData(ArrayList<User> users, ArrayList<Course> courses) {
+
+    // 1. مسح الـ enrolledCourses لكل students
+    for (User u : users) {
+        if (u instanceof Student s) {
+            s.getEnrolledCourses().clear();
+        }
+    }
+
+    // 2. مسح الطلاب من كل course
+    for (Course c : courses) {
+        c.getStudents().clear();
+    }
+
+    // 3. ربط البيانات من الأول: based on progress
+    for (User u : users) {
+        if (u instanceof Student s) {
+
+            for (Course c : courses) {
+
+                // لو الطالب عنده progress في الكورس
+                if (s.getProgress().containsKey(c.getCourseId())) {
+
+                    // أضف courseId للـ student
+                    if (!s.getEnrolledCourses().contains(c.getCourseId())) {
+                        s.getEnrolledCourses().add(c.getCourseId());
+                    }
+
+                    // أضف student للـ course
+                    if (!c.getStudents().contains(s)) {
+                        c.getStudents().add(s);
+                    }
+                }
+            }
+        }
+    }
+
+    // 4. حفظ الملفات بعد التزامن
+    writeUsers(users);
+    writeCourses(courses);
+}
+
+
+
+
+
+
+
+
 }
