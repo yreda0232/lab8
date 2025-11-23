@@ -125,7 +125,7 @@ db.writeUsers(users);
     ArrayList<Course> visible = new ArrayList<>();
 
     for (Course c : courses) {
-        if (c.getStatus() == CourseStatus.APPROVED) {
+        if (c.getStatus() == Course.Status.APPROVED) {
             visible.add(c);
         }
     }

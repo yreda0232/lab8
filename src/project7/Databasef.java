@@ -163,8 +163,9 @@ public class Databasef {
                     certObj.put("courseId", cert.getCourseId());
                     certObj.put("issueDate", cert.getIssueDate());
                     
+                    certArr.put(certObj); 
                 }
-                o.put("certifiacte", certArr);
+                o.put("certificates", certArr);
             }
 
             if (u instanceof Instructor i) {
@@ -206,11 +207,11 @@ public class Databasef {
                     o.getString("instructorId"),
                     status
             );
-            String status = o.optString("status", "PENDING");
+            String currentStatus = o.optString("status", "PENDING");
             String lastMod = o.optString("lastModifiedBy", "");
             String lastChange = o.optString("lastStatusChange", "");
 
-            c.setStatus(CourseStatus.valueOf(status));
+            c.setStatus(Course.Status.valueOf(currentStatus));
             c.setLastModifiedBy(lastMod);
             c.setLastStatusChange(lastChange);
 
@@ -262,7 +263,7 @@ public class Databasef {
                 c.addLesson(l);
             }
 
-            JSONArray st = o.getJSONArray("students");
+           /* JSONArray st = o.getJSONArray("students");
 
 for (int j = 0; j < st.length(); j++) {
     JSONObject stuObj = st.getJSONObject(j);
@@ -271,7 +272,18 @@ for (int j = 0; j < st.length(); j++) {
     if (s != null) {
         c.addStudent(s);
     }
-}
+} */
+           
+           JSONArray st = o.getJSONArray("students");
+
+            for (int j = 0; j < st.length(); j++) {
+                String id = st.getString(j);
+                Student s = Student.getStudentById(id);
+                if (s != null) {
+                    c.addStudent(s);
+                }
+            }
+
 
             courses.add(c);
         }
@@ -333,7 +345,13 @@ for (int j = 0; j < st.length(); j++) {
                 }
             o.put("lessons", L);
 
-            o.put("students", c.getStudents());
+            // بدلاً من: o.put("students", c.getStudents());
+            JSONArray stuArr = new JSONArray();
+            for (Student s : c.getStudents()) {
+                stuArr.put(s.getId());
+            }
+            o.put("students", stuArr);
+
 
             arr.put(o);
         }
@@ -426,7 +444,7 @@ for (int j = 0; j < st.length(); j++) {
         for (String qId : ans.keySet()) {
             attempt.addAnswer(qId, ans.getString(qId));
         }
-        attempt.setScore(o.getInt("score"));
+       // attempt.setScore(o.getInt("score"));
         attempts.add(attempt);
     }
     return attempts;
