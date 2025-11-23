@@ -4,6 +4,7 @@
  */
 package project7;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -14,7 +15,7 @@ public class QuizAttempt {
     private String attemptId;
     private String quizId;
     private String studentId;
-    private int score;
+    private ArrayList<Integer> scores;
     private HashMap<String, String> answers;
     private int attemptNumber;
     
@@ -24,10 +25,47 @@ public class QuizAttempt {
         this.studentId = studentId;
         this.attemptNumber = attemptNumber;
         this.answers = new HashMap<>();
-        this.score = 0;
+        this.scores = new ArrayList<>();
     }
+
+    public String getAttemptId() {
+        return attemptId;
+    }
+
+    public String getQuizId() {
+        return quizId;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+
+    public HashMap<String, String> getAnswers() {
+        return answers;
+    }
+
+    public int getAttemptNumber() {
+        return attemptNumber;
+    }
+
+    public void setAttemptNumber(int attemptNumber) {
+        this.attemptNumber = attemptNumber;
+    }
+     
+    public void addScore(int score) {
+        this.scores.add(score);
+        this.attemptNumber = scores.size();
+    }
+
+    public ArrayList<Integer> getScores() {
+        return scores;
+    }
+     
+
      
      public void addAnswer(String questionId, String chosenOption) {
         answers.put(questionId, chosenOption);
     }
+     
 }

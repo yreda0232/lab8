@@ -1,7 +1,8 @@
 [
     {
         "role": "student",
-        "enrolledCourses": [],
+        "certifiacte": [],
+        "enrolledCourses": ["321"],
         "progress": {},
         "userId": "9300",
         "email": "ramez@gmail.com",
@@ -18,6 +19,7 @@
     },
     {
         "role": "student",
+        "certifiacte": [],
         "enrolledCourses": ["C1"],
         "progress": {},
         "userId": "9627",
