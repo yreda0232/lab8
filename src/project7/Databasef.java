@@ -72,7 +72,18 @@ public class Databasef {
                 for (int j = 0; j < enrolled.length(); j++) {
                     s.getEnrolledCourses().add(enrolled.getString(j));
                 }
-
+JSONObject lessonCompletedObj = o.optJSONObject("lessonCompleted");
+    if (lessonCompletedObj != null) {
+        for (String key : lessonCompletedObj.keySet()) {
+            s.getLessonCompleted().put(key, lessonCompletedObj.getBoolean(key));
+        }
+    }
+    JSONObject quizResultsObj = o.optJSONObject("quizResults");
+    if (quizResultsObj != null) {
+        for (String key : quizResultsObj.keySet()) {
+            s.getQuizResults().put(key, quizResultsObj.getInt(key));
+        }
+    }
                 JSONObject prog = o.getJSONObject("progress");
                 for (String courseId : prog.keySet()) {
                     JSONArray completedLessons = prog.getJSONArray(courseId);
@@ -122,7 +133,20 @@ public class Databasef {
 
             if (u instanceof Student s) {
                 o.put("enrolledCourses", s.getEnrolledCourses());
-                o.put("progress", s.getProgress());
+                o.put("progress", s.getProgress()); 
+                JSONObject lessonCompletedObj = new JSONObject();
+    for (String key : s.getLessonCompleted().keySet()) {
+        lessonCompletedObj.put(key, s.getLessonCompleted().get(key));
+    }
+    o.put("lessonCompleted", lessonCompletedObj);
+            
+            JSONObject quizResultsObj = new JSONObject();
+    for (String key : s.getQuizResults().keySet()) {
+        quizResultsObj.put(key, s.getQuizResults().get(key));
+    }
+    o.put("quizResults", quizResultsObj);
+            o.put("progress", s.getProgress());
+            
             }
 
             if (u instanceof Instructor i) {
@@ -255,6 +279,17 @@ for (int j = 0; j < st.length(); j++) {
 
         writeCourses(courses);
     }
+    
+    public void updateStudent(Student student) {
+    ArrayList<User> allUsers = readUsers();
+    for (int i = 0; i < allUsers.size(); i++) {
+        if (allUsers.get(i).getId().equals(student.getId())) {
+            allUsers.set(i, student); // replace the old student with the updated one
+            break;
+        }
+    }
+    writeUsers(allUsers); // save changes to users.json
+}
 
     public ArrayList<Course> loadCoursesByInstructor(String instructorId) {
         ArrayList<Course> all = readCourses();

@@ -36,11 +36,18 @@ public class Course {
     public String getCourseId() {
         return courseId;
     }
-
+public int getTotalLessons() {
+    return lessons.size();
+}
     public ArrayList<Lesson> getLessons() {
         return lessons;
     }
-
+public Lesson getLessonById(String lessonId) {
+    for (Lesson l : lessons) {
+        if (l.getLessonId().equals(lessonId)) return l;
+    }
+    return null;
+}
     public ArrayList<Student> getStudents() {
         return students;
     }
@@ -73,7 +80,6 @@ public class Course {
     public void setInstructorId(String instructorId) {
         this.instructorId = instructorId;
     }
-
     
     public void editCourse(String newTitle, String newDescription, String newInstructorId) {
         if (newTitle != null) this.title = newTitle;
@@ -92,22 +98,17 @@ public class Course {
         }
     }
 
-   
-
-    
     public void addLesson(Lesson lesson) {
         if (!lessons.contains(lesson)) {
             lessons.add(lesson);
         }
     }
 
-    
     public void addStudent(Student s) {
         if (!students.contains(s)) {
             students.add(s);
         }
     }
-
     
     public ArrayList<String> getStudentIds() {
         ArrayList<String> ids = new ArrayList<>();
@@ -131,7 +132,6 @@ public class Course {
         }
         return null; 
 }
-
 }
 
 
