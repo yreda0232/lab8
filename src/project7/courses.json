@@ -1,19 +1,2 @@
 [
-    {
-    "lastModifiedBy": "",
-    "lastStatusChange": "",
-    "description": "5ara",
-    "students": ["9300"],
-    "title": "Maths",
-    "courseId": "987",
-    "instructorId": "9375",
-    "status": "PENDING",
-    "lessons": [{
-        "lessonId": "alg",
-        "resources": [],
-        "quizzes": [],
-        "title": "triangle",
-        "content": "araf"
-    }]
-    }
 ]
