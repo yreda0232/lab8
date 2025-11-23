@@ -188,8 +188,9 @@ JSONObject lessonCompletedObj = o.optJSONObject("lessonCompleted");
                     certObj.put("courseId", cert.getCourseId());
                     certObj.put("issueDate", cert.getIssueDate());
                     
+                    certArr.put(certObj); 
                 }
-                o.put("certifiacte", certArr);
+                o.put("certificates", certArr);
             }
 
             if (u instanceof Instructor i) {
@@ -283,7 +284,7 @@ JSONObject lessonCompletedObj = o.optJSONObject("lessonCompleted");
                 c.addLesson(l);
             }
 
-            JSONArray st = o.getJSONArray("students");
+           /* JSONArray st = o.getJSONArray("students");
 
 for (int j = 0; j < st.length(); j++) {
     JSONObject stuObj = st.getJSONObject(j);
@@ -292,7 +293,18 @@ for (int j = 0; j < st.length(); j++) {
     if (s != null) {
         c.addStudent(s);
     }
-}
+} */
+           
+           JSONArray st = o.getJSONArray("students");
+
+            for (int j = 0; j < st.length(); j++) {
+                String id = st.getString(j);
+                Student s = Student.getStudentById(id);
+                if (s != null) {
+                    c.addStudent(s);
+                }
+            }
+
 
             courses.add(c);
         }
@@ -354,13 +366,13 @@ for (int j = 0; j < st.length(); j++) {
                 }
             o.put("lessons", L);
 
-            JSONArray studentsArr = new JSONArray();
+            // بدلاً من: o.put("students", c.getStudents());
+            JSONArray stuArr = new JSONArray();
             for (Student s : c.getStudents()) {
-                JSONObject stu = new JSONObject();
-                stu.put("id", s.getId());
-                studentsArr.put(stu);
+                stuArr.put(s.getId());
             }
-            o.put("students", studentsArr);
+            o.put("students", stuArr);
+
 
             arr.put(o);
         }
@@ -461,7 +473,7 @@ for (int j = 0; j < st.length(); j++) {
         for (String qId : ans.keySet()) {
             attempt.addAnswer(qId, ans.getString(qId));
         }
-        
+       // attempt.setScore(o.getInt("score"));
         attempts.add(attempt);
     }
     return attempts;

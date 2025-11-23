@@ -1,51 +1,17 @@
-[
-    {
-        "lastModifiedBy": "",
-        "lastStatusChange": "",
-        "description": "testtest",
-        "students": [],
-        "title": "test",
-        "courseId": "123",
-        "instructorId": "9375",
-        "status": "PENDING",
-        "lessons": []
-    },
-    {
-        "lastModifiedBy": "",
-        "lastStatusChange": "",
-        "description": "testtest",
-        "students": [{"id": "9300"}],
-        "title": "test2",
-        "courseId": "321",
-        "instructorId": "9375",
-        "status": "APPROVED",
-        "lessons": [
-            {
-        "lessonId": "L1",
-        "title": "Lesson 1",
-        "content": "Content here",
+[{
+    "lastModifiedBy": "",
+    "lastStatusChange": "",
+    "description": "5ara",
+    "students": ["9300"],
+    "title": "Maths",
+    "courseId": "987",
+    "instructorId": "9375",
+    "status": "PENDING",
+    "lessons": [{
+        "lessonId": "alg",
         "resources": [],
-        "quiz": {
-            "quizId": "Q1",
-            "title": "Quiz 1",
-            "lessonId": "L1",
-            "maxRetries": 2,
-            "questions": [
-                {
-                    "questionId": "Q1-1",
-                    "text": "What is 2+2?",
-                    "options": ["1", "2", "3", "4"],
-                    "correctAnswer": "4"
-                },
-                {
-                    "questionId": "Q1-2",
-                    "text": "What is 3+3?",
-                    "options": ["3", "6", "9", "12"],
-                    "correctAnswer": "6"
-                }
-            ]
-        }
-    }
-        ]
-    }
-]
+        "quizzes": [],
+        "title": "triangle",
+        "content": "araf"
+    }]
+}]

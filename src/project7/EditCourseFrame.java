@@ -256,7 +256,6 @@ public class EditCourseFrame extends javax.swing.JFrame {
         textField1.setText(selected.getCourseId());
         TitleField.setText(selected.getTitle());
         textField3.setText(selected.getDescription());
-        textField3.setText(selected.getInstructorId());
 
     }
     }//GEN-LAST:event_jTable1MouseClicked

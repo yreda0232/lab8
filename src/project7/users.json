@@ -1,37 +1,31 @@
 [
     {
         "role": "student",
-        "certifiacte": [],
-        "enrolledCourses": ["321"],
-        "progress": {},
+        "certificates": [{
+            "certificateId": "CERT-1763937541137",
+            "issueDate": "2025-11-24",
+            "courseId": "987"
+        }],
+        "enrolledCourses": ["987"],
+        "progress": {"987": ["alg"]},
         "userId": "9300",
-        "email": "ramez@gmail.com",
+        "email": "r@.c",
         "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-        "username": "ramez"
+        "username": "Ramez"
     },
     {
         "role": "instructor",
         "createdCourses": [],
         "userId": "9375",
-        "email": "y@gmail.com",
+        "email": "y@.c",
         "passwordHash": "20f3765880a5c269b747e1e906054a4b4a3a991259f1e16b5dde4742cec2319a",
-        "username": "youssef"
-    },
-    {
-        "role": "student",
-        "certifiacte": [],
-        "enrolledCourses": ["C1"],
-        "progress": {},
-        "userId": "9627",
-        "email": "youssef123@gmail.com",
-        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-        "username": "youssef"
+        "username": "Youssef"
     },
     {
         "role": "admin",
-        "userId": "9000",
-        "email": "t@gmail.com",
-        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-        "username": "taras"
+        "userId": "1000",
+        "email": "t@.c",
+        "passwordHash": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+        "username": "Taras"
     }
 ]
