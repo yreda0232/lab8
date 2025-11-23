@@ -80,9 +80,23 @@ public Lesson getLessonById(String lessonId) {
     
     public Status getStatus(){return status;}
 
-    public void setLastModifiedBy(String lastModifiedBy) {this.lastModifiedBy = lastModifiedBy;}
+    public String getLastModifiedBy() {return lastModifiedBy;}
 
-    public void setLastStatusChange(String lastStatusChange) {this.lastStatusChange = lastStatusChange;}
+    public String getLastStatusChange() {return lastStatusChange;}
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public void setLastStatusChange(String lastStatusChange) {
+        this.lastStatusChange = lastStatusChange;
+    }
+
+    
+    
+    public String getLastModifiedBy() {return lastModifiedBy;}
+
+    public String getLastStatusChange() {return lastStatusChange;}
     
     
     public void editCourse(String newTitle, String newDescription, String newInstructorId) {

@@ -64,8 +64,18 @@ public class Student extends User {
 
     return completedLessons.size() == c.getLessons().size();
 }
-
-
+    
+    public void addCertificate(Certificate cert)
+    {
+        if(cert != null)
+            this.certificates.add(cert);
+    }
+   
+    public ArrayList<Certificate> getCertificates()
+    {
+        return certificates;
+    }
+    
     public String getName() {
         return name;
     }
@@ -95,9 +105,6 @@ public class Student extends User {
 
         return null;  
 }
-
-    
-    public ArrayList<Certificate> getCertificates() {return certificates;}
             
 }
 
