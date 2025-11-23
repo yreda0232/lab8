@@ -16,7 +16,8 @@ public class Student extends User {
         private ArrayList<String> enrolledCourses; 
         private HashMap<String, Integer> quizResults;
         private HashMap<String, Boolean> lessonCompleted;
-        private HashMap<String, ArrayList<String>> progress;
+    private HashMap<String, ArrayList<String>> progress;
+    private ArrayList<Certificate> certificates = new ArrayList<>();
 
     public Student(String id, String name, String email, String passwordHash) {
         super(id, name, email, passwordHash, "student");
@@ -43,10 +44,34 @@ public class Student extends User {
         }
     }
     public void markLessonCompleted(String courseId, String lessonId) {
-    progress.putIfAbsent(courseId, new ArrayList<>());
-    ArrayList<String> completedLessons = progress.get(courseId);
-    if (!completedLessons.contains(lessonId)) {
-        completedLessons.add(lessonId);
+        progress.putIfAbsent(courseId, new ArrayList<>());
+        ArrayList<String> completed = progress.get(courseId);
+
+        if (!completed.contains(lessonId)) {
+            completed.add(lessonId);
+        }
+    }
+
+    public boolean hasCompletedLesson(String courseId, String lessonId) {
+        return progress.containsKey(courseId) 
+                && progress.get(courseId).contains(lessonId);
+    }
+
+    public HashMap<String, ArrayList<String>> getProgress() {
+        return progress;
+    }
+    
+    public boolean hasCompletedCourse(Course c) {
+    if (!progress.containsKey(c.getCourseId())) return false;
+
+    ArrayList<String> completedLessons = progress.get(c.getCourseId());
+
+    return completedLessons.size() == c.getLessons().size();
+}
+
+
+    public String getName() {
+        return name;
     }
 }
     
@@ -75,4 +100,9 @@ public class Student extends User {
 
         return null;  
 }
+
+    
+    public ArrayList<Certificate> getCertificates() {return certificates;}
+            
+
 }
