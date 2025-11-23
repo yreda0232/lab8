@@ -129,7 +129,6 @@ public class InstructorFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-<<<<<<< Updated upstream
       ViewStudentsForm studentsForm = new ViewStudentsForm(instructor,db);
    JFrame frame = new JFrame("View Enrolled Students");
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -138,10 +137,7 @@ public class InstructorFrame extends javax.swing.JFrame {
     frame.setLocationRelativeTo(null);
     frame.setVisible(true);
    dispose();
-=======
-       ViewStudentsForm studentsForm = new ViewStudentsForm(instructor);
    studentsForm.setVisible(true);
->>>>>>> Stashed changes
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

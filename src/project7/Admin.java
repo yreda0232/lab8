@@ -8,13 +8,9 @@ package project7;
  *
  * @author 20114
  */
-<<<<<<< Updated upstream
+
 public class Admin extends User{
     public Admin(String id, String name, String email, String passwordHash) {
         super(id, name, email, passwordHash, "admin");
     }
-=======
-public class Admin {
-    
->>>>>>> Stashed changes
 }
