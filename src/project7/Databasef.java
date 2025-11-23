@@ -172,6 +172,42 @@ public class Databasef {
                         L.getString("title"),
                         L.getString("content")
                 );
+                JSONArray quizzesArr = L.optJSONArray("quizzes");  // لو موجود
+    if (quizzesArr != null) {
+        for (int k = 0; k < quizzesArr.length(); k++) {
+            JSONObject Qz = quizzesArr.getJSONObject(k);
+            Quiz quiz = new Quiz(
+                Qz.getString("quizId"),
+                Qz.getString("title"),
+                new ArrayList<>(),  // questions هيتضافوا بعدين
+                Qz.optInt("maxRetries", 1),
+                l.getLessonId()
+            );
+            // قراءة الـ Questions
+            JSONArray questionsArr = Qz.optJSONArray("questions");
+            if (questionsArr != null) {
+                for (int q = 0; q < questionsArr.length(); q++) {
+                    JSONObject qs = questionsArr.getJSONObject(q);
+                    ArrayList<String> options = new ArrayList<>();
+                    JSONArray opts = qs.optJSONArray("options");
+                    if (opts != null) {
+                        for (int m = 0; m < opts.length(); m++) {
+                            options.add(opts.getString(m));
+                        }
+                    }
+                    Question question = new Question(
+                        qs.getString("questionId"),
+                        qs.getString("text"),
+                        options,
+                        qs.getString("correctAnswer")
+                    );
+                    quiz.addQuestion(question);
+                }
+            }
+            l.addQuiz(quiz);
+        }
+    }
+                
                 c.addLesson(l);
             }
 
@@ -206,15 +242,44 @@ for (int j = 0; j < st.length(); j++) {
             o.put("lastModifiedBy", c.getLastModifiedBy());
             o.put("lastStatusChange", c.getLastStatusChange());
 
-            JSONArray L = new JSONArray();
+            
+             JSONArray L = new JSONArray();
             for (Lesson ls : c.getLessons()) {
                 JSONObject obj = new JSONObject();
                 obj.put("lessonId", ls.getLessonId());
                 obj.put("title", ls.getTitle());
                 obj.put("content", ls.getContent());
                 obj.put("resources", ls.getResources());
+
+
+                JSONArray quizzesArray = new JSONArray();
+                if (ls.getQuizzes() != null) {
+                    for (Quiz q : ls.getQuizzes()) {
+                        JSONObject quizObj = new JSONObject();
+                        quizObj.put("quizId", q.getQuizId());
+                        quizObj.put("title", q.getTitle());
+                        quizObj.put("lessonId", q.getLessonId());
+                        quizObj.put("maxRetries", q.getMaxRetries());
+
+                        // إضافة الأسئلة داخل الـ Quiz
+                        JSONArray questionsArray = new JSONArray();
+                        if (q.getQuestions() != null) {
+                            for (Question ques : q.getQuestions()) {
+                                JSONObject quesObj = new JSONObject();
+                                quesObj.put("questionId", ques.getQuestionId());
+                                quesObj.put("text", ques.getText());
+                                quesObj.put("options", ques.getOptions());
+                                quesObj.put("correctAnswer", ques.getCorrectAnswer());
+                                questionsArray.put(quesObj);
+                            }
+                        }
+                        quizObj.put("questions", questionsArray);
+                        quizzesArray.put(quizObj);
+                    }
+                }
+                obj.put("quizzes", quizzesArray);
                 L.put(obj);
-            }
+                }
             o.put("lessons", L);
 
             o.put("students", c.getStudents());
