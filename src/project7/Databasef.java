@@ -74,26 +74,26 @@ public class Databasef {
                     s.getEnrolledCourses().add(enrolled.getString(j));
                 }
 JSONObject lessonCompletedObj = o.optJSONObject("lessonCompleted");
-    if (lessonCompletedObj != null) {
-        for (String key : lessonCompletedObj.keySet()) {
-            s.getLessonCompleted().put(key, lessonCompletedObj.getBoolean(key));
-        }
-    }
-    JSONObject quizResultsObj = o.optJSONObject("quizResults");
-    if (quizResultsObj != null) {
-        for (String key : quizResultsObj.keySet()) {
-            s.getQuizResults().put(key, quizResultsObj.getInt(key));
-        }
-    }
-                JSONObject prog = o.getJSONObject("progress");
-                for (String courseId : prog.keySet()) {
-                    JSONArray completedLessons = prog.getJSONArray(courseId);
-                    ArrayList<String> lessonsList = new ArrayList<>();
-                    for (int k = 0; k < completedLessons.length(); k++) {
-                        lessonsList.add(completedLessons.getString(k));
-                    }
-                    s.getProgress().put(courseId, lessonsList);
-                }
+          if (lessonCompletedObj != null) {
+          for (String key : lessonCompletedObj.keySet()) {
+          s.getLessonCompleted().put(key, lessonCompletedObj.getBoolean(key));
+          }
+          }
+JSONObject quizResultsObj = o.optJSONObject("quizResults");
+          if (quizResultsObj != null) {
+          for (String key : quizResultsObj.keySet()) {
+          s.getQuizResults().put(key, quizResultsObj.getInt(key));
+          }
+          }
+JSONObject prog = o.getJSONObject("progress");
+          for (String courseId : prog.keySet()) {
+          JSONArray completedLessons = prog.getJSONArray(courseId);
+          ArrayList<String> lessonsList = new ArrayList<>();
+          for (int k = 0; k < completedLessons.length(); k++) {
+          lessonsList.add(completedLessons.getString(k));
+          }
+          s.getProgress().put(courseId, lessonsList);
+          }
                 
                 if(o.has("certificates"))
             {
@@ -165,21 +165,21 @@ JSONObject lessonCompletedObj = o.optJSONObject("lessonCompleted");
             if (u instanceof Student s) {
                 o.put("enrolledCourses", s.getEnrolledCourses());
                 o.put("progress", s.getProgress()); 
-                JSONObject lessonCompletedObj = new JSONObject();
+                
+JSONObject lessonCompletedObj = new JSONObject();
     for (String key : s.getLessonCompleted().keySet()) {
-        lessonCompletedObj.put(key, s.getLessonCompleted().get(key));
+    lessonCompletedObj.put(key, s.getLessonCompleted().get(key));
     }
     o.put("lessonCompleted", lessonCompletedObj);
             
-            JSONObject quizResultsObj = new JSONObject();
+JSONObject quizResultsObj = new JSONObject();
     for (String key : s.getQuizResults().keySet()) {
-        quizResultsObj.put(key, s.getQuizResults().get(key));
+    quizResultsObj.put(key, s.getQuizResults().get(key));
     }
     o.put("quizResults", quizResultsObj);
-            o.put("progress", s.getProgress());
+    
+    o.put("progress", s.getProgress());
             
-               
-                
                 JSONArray certArr = new JSONArray();
                 for(Certificate cert : s.getCertificates())
                 {
@@ -665,13 +665,6 @@ public static void synchronizeData(ArrayList<User> users, ArrayList<Course> cour
     writeUsers(users);
     writeCourses(courses);
 }
-
-
-
-
-
-
-
 
     
 }
