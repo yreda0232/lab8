@@ -83,6 +83,23 @@ public class Databasef {
                     }
                     s.getProgress().put(courseId, lessonsList);
                 }
+                
+                if(o.has("certificates"))
+            {
+                JSONArray certArr = o.getJSONArray("certificates");
+                for(int k=0; k<certArr.length(); k++)
+                {
+                    JSONObject certObj = certArr.getJSONObject(k);
+                    
+                    Certificate cert = new Certificate(
+                            certObj.getString("certificateId"),
+                            o.getString("userId"),
+                            certObj.getString("courseId"),
+                            certObj.getString("issueDate")
+                    );
+                    s.getCertificates().add(cert);
+                }
+            }
 
                 users.add(s);
             } else if (o.getString("role").equals("instructor")) {
@@ -105,6 +122,19 @@ public class Databasef {
 
                 users.add(ins);
             }
+            else if(o.getString("role").equals("admin"))
+            {
+                Admin a =new Admin(
+                        o.getString("userId"),
+                        o.getString("username"),
+                        o.getString("email"),
+                        o.getString("passwordHash")
+                );
+                users.add(a);
+            }
+            
+            
+
         }
 
         return users;
@@ -124,6 +154,17 @@ public class Databasef {
             if (u instanceof Student s) {
                 o.put("enrolledCourses", s.getEnrolledCourses());
                 o.put("progress", s.getProgress());
+                
+                JSONArray certArr = new JSONArray();
+                for(Certificate cert : s.getCertificates())
+                {
+                    JSONObject certObj = new JSONObject();
+                    certObj.put("certificateId", cert.getCertificateId());
+                    certObj.put("courseId", cert.getCourseId());
+                    certObj.put("issueDate", cert.getIssueDate());
+                    
+                }
+                o.put("certifiacte", certArr);
             }
 
             if (u instanceof Instructor i) {
@@ -151,11 +192,19 @@ public class Databasef {
         for (int i = 0; i < arr.length(); i++) {
             JSONObject o = arr.getJSONObject(i);
 
+            String statusStr = "PENDING";
+            if (o.has("status") && !o.isNull("status")) {
+                statusStr = String.valueOf(o.get("status"));
+            }
+
+            Course.Status status = Course.Status.valueOf(statusStr);
+
             Course c = new Course(
                     o.getString("courseId"),
                     o.getString("title"),
                     o.getString("description"),
-                    o.getString("instructorId")
+                    o.getString("instructorId"),
+                    status
             );
             String status = o.optString("status", "PENDING");
             String lastMod = o.optString("lastModifiedBy", "");
@@ -164,6 +213,7 @@ public class Databasef {
             c.setStatus(CourseStatus.valueOf(status));
             c.setLastModifiedBy(lastMod);
             c.setLastStatusChange(lastChange);
+
 
             JSONArray lessons = o.getJSONArray("lessons");
             for (int j = 0; j < lessons.length(); j++) {
@@ -302,6 +352,65 @@ for (int j = 0; j < st.length(); j++) {
         return instructorCourses;
     }
     
+    public ArrayList<Course> getPendingCourses()
+    {
+        ArrayList<Course> all =readCourses();
+        ArrayList<Course> pending =new ArrayList<>();
+        
+        for(Course c : all)
+        {
+            if(c.getStatus() == Course.Status.PENDING)
+                pending.add(c);
+        }
+        
+        return pending;
+    }
+    
+    public boolean approveCourse(String courseId)
+    {
+        ArrayList<Course> courses = readCourses();
+        boolean changed = false;
+        
+        for(Course c : courses)
+        {
+            if(c.getCourseId().equals(courseId))
+            {
+                c.setStatus(Course.Status.APPROVED);
+                changed = true;
+                break;
+            }
+        }
+        if(changed) writeCourses(courses);
+        return changed;
+    }
+    
+    public boolean rejectCourse(String courseId)
+    {
+        ArrayList<Course> courses = readCourses();
+        boolean changed = false;
+        
+        for(Course c : courses)
+        {
+            if(c.getCourseId().equals(courseId))
+            {
+                c.setStatus(Course.Status.REJECTED);
+                changed = true;
+                break;
+            }
+        }
+        if(changed) writeCourses(courses);
+        return changed;
+    }
+    
+    // hena beygenerate Certificate Automatically
+    public Certificate generateCertificate(String studentId, String courseId) {
+    String certId = "CERT-" + System.currentTimeMillis();
+    String date = java.time.LocalDate.now().toString();
+
+    return new Certificate(certId, studentId, courseId, date);
+}
+
+
     public static ArrayList<QuizAttempt> readQuizAttempts() {
     ArrayList<QuizAttempt> attempts = new ArrayList<>();
     JSONArray arr = new JSONArray(readFile(QUIZ_ATTEMPTS_FILE));
