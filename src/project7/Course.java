@@ -46,18 +46,14 @@ public class Course {
 public int getTotalLessons() {
     return lessons.size();
 }
-    public ArrayList<Lesson> getLessons() {
-        return lessons;
-    }
+
 public Lesson getLessonById(String lessonId) {
     for (Lesson l : lessons) {
         if (l.getLessonId().equals(lessonId)) return l;
     }
     return null;
 }
-    public ArrayList<Student> getStudents() {
-        return students;
-    }
+ 
 
     // ----------------- GETTERS -----------------
     public String getCourseId() {return courseId;}
