@@ -111,10 +111,8 @@ public ViewCoursesFrame(Student s, StudentService service, Databasef db) {
                                 .addComponent(jLabel1))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(310, 310, 310)
-                                .addComponent(jLabel2)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                                .addComponent(jLabel2))
+                            .addComponent(jButton1))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -159,6 +157,14 @@ SwingUtilities.getWindowAncestor(this).dispose();
     model1.setRowCount(0);  // Clear table
 
     for (Course c : allCourses) {
+        
+        if (c.getStatus() != Course.Status.APPROVED) {
+            continue;  
+        }
+        
+        if (currentStudent.getEnrolledCourses().contains(c.getCourseId())) {
+            continue;
+        }
 
         // Get instructor name by instructorId
         String instructorName = "";
