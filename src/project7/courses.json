@@ -6,12 +6,12 @@
     "title": "Maths",
     "courseId": "987",
     "instructorId": "9375",
-    "status": "PENDING",
+    "status": "APPROVED",
     "lessons": [{
-        "lessonId": "alg",
+        "lessonId": "789",
         "resources": [],
         "quizzes": [],
-        "title": "triangle",
-        "content": "araf"
+        "title": "lesson1",
+        "content": "aarf"
     }]
 }]
