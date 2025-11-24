@@ -1,1 +1,18 @@
-[]
+[
+    {
+        "studentId": "9300",
+        "attemptNumber": 1,
+        "quizId": "QZ-1",
+        "scores": [4],
+        "answers": {},
+        "attemptId": "ATT-1763950632134"
+    },
+    {
+        "studentId": "9300",
+        "attemptNumber": 1,
+        "quizId": "QZ-2",
+        "scores": [1],
+        "answers": {},
+        "attemptId": "ATT-1763950910407"
+    }
+]

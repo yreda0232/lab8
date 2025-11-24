@@ -5,6 +5,7 @@
 package project7;
 
 import java.util.ArrayList;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -16,14 +17,16 @@ public class TakeQuiz extends javax.swing.JPanel {
     private Databasef db;
     private Course selectedCourse;
     private Lesson selectedLesson;
+    private StudentService service;
 
     /**
      * Creates new form TakeQuiz
      */
-    public TakeQuiz(Student currentstudent,Databasef db) {
+    public TakeQuiz(Student currentstudent,Databasef db,StudentService service) {
         this.db=db;
         this.currentstudent=currentstudent;
         initComponents();
+        this.service=service;
         ArrayList<Course> studentCourses = new ArrayList<>();
         for (String courseId : currentstudent.getEnrolledCourses()) {
         Course c = Course.getCourseById(courseId);
@@ -50,6 +53,7 @@ public class TakeQuiz extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setText("Quiz");
@@ -97,6 +101,13 @@ public class TakeQuiz extends javax.swing.JPanel {
             }
         });
 
+        jButton2.setText("Back");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -113,11 +124,14 @@ public class TakeQuiz extends javax.swing.JPanel {
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(130, 130, 130)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(321, 321, 321)
-                        .addComponent(jButton1)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(159, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(321, 321, 321)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(51, 51, 51))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -130,9 +144,15 @@ public class TakeQuiz extends javax.swing.JPanel {
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
-                .addComponent(jButton1)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(jButton1)
+                        .addContainerGap(76, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
+                        .addComponent(jButton2)
+                        .addGap(57, 57, 57))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -191,18 +211,26 @@ for (Lesson l : selectedCourse.getLessons()) {
         return;
     }
 
-    QuizPanel quizPanel = new QuizPanel(currentstudent,selectedLesson,db);
+    QuizPanel quizPanel = new QuizPanel(currentstudent,selectedLesson,db,service,selectedCourse);
 javax.swing.JFrame f = new javax.swing.JFrame("Take Quiz");
 f.setContentPane(quizPanel);
 f.pack();
 f.setLocationRelativeTo(null);
 f.setVisible(true);
+SwingUtilities.getWindowAncestor(this).dispose();
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        StudentDashboardFrame dashboard = new StudentDashboardFrame(currentstudent, service, db);
+       dashboard.setVisible(true);
+        SwingUtilities.getWindowAncestor(this).dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

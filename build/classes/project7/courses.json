@@ -1,4 +1,5 @@
-[{
+[
+  {
     "lastModifiedBy": "",
     "lastStatusChange": "",
     "description": "5ara",
@@ -6,12 +7,73 @@
     "title": "Maths",
     "courseId": "987",
     "instructorId": "9375",
-    "status": "PENDING",
-    "lessons": [{
+    "status": "APPROVED",
+    "lessons": [
+      {
         "lessonId": "789",
         "resources": [],
-        "quizzes": [],
+        "quiz": {
+          "quizId": "QZ-1",
+          "title": "Sample Quiz 1",
+          "lessonId": "789",
+          "maxRetries": 2,
+          "questions": [
+            {
+              "questionId": "Q-1",
+              "text": "What is 2+2?",
+              "options": ["3", "4", "5", "6"],
+              "correctAnswer": "4"
+            },
+            {
+              "questionId": "Q-2",
+              "text": "What is 2+2?",
+              "options": ["3", "4", "5", "6"],
+              "correctAnswer": "4"
+            },
+            {
+              "questionId": "Q-3",
+              "text": "What is 2+2?",
+              "options": ["3", "4", "5", "6"],
+              "correctAnswer": "4"
+            },
+            {
+              "questionId": "Q-4",
+              "text": "What is 5-3?",
+              "options": ["1", "2", "3", "4"],
+              "correctAnswer": "2"
+            }
+          ]
+        },
         "title": "lesson1",
         "content": "aarf"
-    }]
-}]
+      },
+      {
+        "lessonId": "790",
+        "resources": [],
+        "quiz": null,
+        "title": "lesson2",
+        "content": "content of lesson2"
+      },
+      {
+        "lessonId": "791",
+        "resources": [],
+        "quiz": {
+          "quizId": "QZ-2",
+          "title": "Sample Quiz 2",
+          "lessonId": "791",
+          "maxRetries": 2,
+          "questions": [
+            {
+              "questionId": "Q-3",
+              "text": "What is 10/2?",
+              "options": ["4", "5", "6", "7"],
+              "correctAnswer": "5"
+            }
+          ]
+        },
+        "title": "lesson3",
+        "content": "content of lesson3"
+      }
+    ]
+  }
+]
