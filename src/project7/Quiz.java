@@ -44,6 +44,10 @@ public class Quiz {
     public String getLessonId() {
         return lessonId;
     }
+
+    public void setMaxRetries(int maxRetries) {
+        this.maxRetries = 2;
+    }
     
     
     public void addQuestion(Question question) {

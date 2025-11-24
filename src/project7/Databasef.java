@@ -6,6 +6,10 @@ import org.json.JSONObject;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Databasef {
 
@@ -222,92 +226,92 @@ JSONObject quizResultsObj = new JSONObject();
     // COURSES HANDLING
     // =====================================================================
     public static ArrayList<Course> readCourses() {
-        ArrayList<Course> courses = new ArrayList<>();
-        JSONArray arr = new JSONArray(readFile(COURSES_FILE));
-        
+    ArrayList<Course> courses = new ArrayList<>();
+    JSONArray arr = new JSONArray(readFile(COURSES_FILE));
 
-        for (int i = 0; i < arr.length(); i++) {
-            JSONObject o = arr.getJSONObject(i);
+    for (int i = 0; i < arr.length(); i++) {
+        JSONObject o = arr.getJSONObject(i);
 
-            String statusStr = "PENDING";
-            if (o.has("status") && !o.isNull("status")) {
-                statusStr = String.valueOf(o.get("status"));
-            }
+        Course c = new Course(
+                o.getString("courseId"),
+                o.getString("title"),
+                o.getString("description"),
+                o.getString("instructorId"),
+                Course.Status.valueOf(o.optString("status", "PENDING"))
+        );
 
-            Course.Status status = Course.Status.valueOf(statusStr);
+        c.setLastModifiedBy(o.optString("lastModifiedBy", ""));
+        c.setLastStatusChange(o.optString("lastStatusChange", ""));
 
-            Course c = new Course(
-                    o.getString("courseId"),
-                    o.getString("title"),
-                    o.getString("description"),
-                    o.getString("instructorId"),
-                    status
-            );
-            String currentStatus = o.optString("status", "PENDING");
-            String lastMod = o.optString("lastModifiedBy", "");
-            String lastChange = o.optString("lastStatusChange", "");
-
-            c.setStatus(Course.Status.valueOf(currentStatus));
-            c.setLastModifiedBy(lastMod);
-            c.setLastStatusChange(lastChange);
-
-
-            JSONArray lessons = o.getJSONArray("lessons");
+        // قراءة الدروس
+        JSONArray lessons = o.optJSONArray("lessons");
+        if (lessons != null) {
             for (int j = 0; j < lessons.length(); j++) {
                 JSONObject L = lessons.getJSONObject(j);
+
                 Lesson l = new Lesson(
                         L.getString("lessonId"),
                         L.getString("title"),
                         L.getString("content")
                 );
-                JSONObject Qz = L.optJSONObject("quiz");
-            if (Qz != null) {
-            Quiz quiz = new Quiz(
-                Qz.getString("quizId"),
-                Qz.getString("title"),
-                new ArrayList<>(),  // questions هيتضافوا بعدين
-                l.getLessonId()
-            );
-            // قراءة الـ Questions
-            JSONArray questionsArr = Qz.optJSONArray("questions");
-            if (questionsArr != null) {
-                for (int q = 0; q < questionsArr.length(); q++) {
-                    JSONObject qs = questionsArr.getJSONObject(q);
-                    ArrayList<String> options = new ArrayList<>();
-                    JSONArray opts = qs.optJSONArray("options");
-                    if (opts != null) {
-                        for (int m = 0; m < opts.length(); m++) {
-                            options.add(opts.getString(m));
+
+                // الموارد
+                l.setResources(new ArrayList<>());
+                JSONArray resArr = L.optJSONArray("resources");
+                if (resArr != null) {
+                    for (int r = 0; r < resArr.length(); r++) {
+                        l.getResources().add(resArr.getString(r));
+                    }
+                }
+
+                // Quiz أو null
+                if (L.has("quiz") && !L.isNull("quiz")) {
+                    JSONObject Qz = L.getJSONObject("quiz");
+
+                    Quiz quiz = new Quiz(
+                            Qz.getString("quizId"),
+                            Qz.getString("title"),
+                            new ArrayList<>(),
+                            Qz.getString("lessonId")
+                    );
+
+                    quiz.setMaxRetries(Qz.optInt("maxRetries", 1));
+
+                    JSONArray questionsArr = Qz.optJSONArray("questions");
+                    if (questionsArr != null) {
+                        for (int q = 0; q < questionsArr.length(); q++) {
+                            JSONObject qs = questionsArr.getJSONObject(q);
+
+                            ArrayList<String> options = new ArrayList<>();
+                            JSONArray opts = qs.optJSONArray("options");
+                            if (opts != null) {
+                                for (int m = 0; m < opts.length(); m++) {
+                                    options.add(opts.getString(m));
+                                }
+                            }
+
+                            Question question = new Question(
+                                    qs.getString("questionId"),
+                                    qs.getString("text"),
+                                    options,
+                                    qs.getString("correctAnswer")
+                            );
+                            quiz.addQuestion(question);
                         }
                     }
-                    Question question = new Question(
-                        qs.getString("questionId"),
-                        qs.getString("text"),
-                        options,
-                        qs.getString("correctAnswer")
-                    );
-                    quiz.addQuestion(question);
+
+                    l.setQuiz(quiz);
+                } else {
+                    l.setQuiz(null);
                 }
-            }
-            l.setQuiz(quiz);
-    }
-                
+
                 c.addLesson(l);
             }
+        }
 
-           /* JSONArray st = o.getJSONArray("students");
-
-for (int j = 0; j < st.length(); j++) {
-    JSONObject stuObj = st.getJSONObject(j);
-    String id = stuObj.getString("id");   // ✔ دا الصحيح
-    Student s = Student.getStudentById(id);
-    if (s != null) {
-        c.addStudent(s);
-    }
-} */
-           
-           JSONArray st = o.getJSONArray("students");
-
+        // قراءة الطلاب
+        JSONArray st = o.optJSONArray("students");
+        if (st != null) {
             for (int j = 0; j < st.length(); j++) {
                 String id = st.getString(j);
                 Student s = Student.getStudentById(id);
@@ -315,81 +319,86 @@ for (int j = 0; j < st.length(); j++) {
                     c.addStudent(s);
                 }
             }
-
-
-            courses.add(c);
         }
 
-        return courses;
+        courses.add(c);
     }
 
-    public static void writeCourses(ArrayList<Course> courses) {
-        JSONArray arr = new JSONArray();
-
-        for (Course c : courses) {
-            JSONObject o = new JSONObject();
-
-            o.put("courseId", c.getCourseId());
-            o.put("title", c.getTitle());
-            o.put("description", c.getDescription());
-            o.put("instructorId", c.getInstructorId());
-            o.put("status", c.getStatus().name());
-            o.put("lastModifiedBy", c.getLastModifiedBy());
-            o.put("lastStatusChange", c.getLastStatusChange());
-
-            
-             JSONArray L = new JSONArray();
-            for (Lesson ls : c.getLessons()) {
-                JSONObject obj = new JSONObject();
-                obj.put("lessonId", ls.getLessonId());
-                obj.put("title", ls.getTitle());
-                obj.put("content", ls.getContent());
-                obj.put("resources", ls.getResources());
+    return courses;
+}
 
 
-                JSONArray quizzesArray = new JSONArray();
-                if (ls.getQuiz() != null) {
-                        Quiz q = ls.getQuiz();
-                        JSONObject quizObj = new JSONObject();
-                        quizObj.put("quizId", q.getQuizId());
-                        quizObj.put("title", q.getTitle());
-                        quizObj.put("lessonId", q.getLessonId());
-                        quizObj.put("maxRetries", q.getMaxRetries());
 
-                        // إضافة الأسئلة داخل الـ Quiz
-                        JSONArray questionsArray = new JSONArray();
-                        if (q.getQuestions() != null) {
-                            for (Question ques : q.getQuestions()) {
-                                JSONObject quesObj = new JSONObject();
-                                quesObj.put("questionId", ques.getQuestionId());
-                                quesObj.put("text", ques.getText());
-                                quesObj.put("options", ques.getChoices());
-                                quesObj.put("correctAnswer", ques.getCorrectAnswer());
-                                questionsArray.put(quesObj);
-                            }
-                        }
-                        quizObj.put("questions", questionsArray);
-                        quizzesArray.put(quizObj);
-                    
+
+
+  public static void writeCourses(ArrayList<Course> courses) {
+    JSONArray arr = new JSONArray();
+
+    for (Course c : courses) {
+        Map<String, Object> courseMap = new LinkedHashMap<>();
+        courseMap.put("lastModifiedBy", c.getLastModifiedBy());
+        courseMap.put("lastStatusChange", c.getLastStatusChange());
+        courseMap.put("description", c.getDescription());
+
+        // الطلاب بدون تكرار
+        Set<String> studentIds = new LinkedHashSet<>();
+        for (Student s : c.getStudents()) {
+            studentIds.add(s.getId());
+        }
+        courseMap.put("students", new JSONArray(studentIds));
+
+        courseMap.put("title", c.getTitle());
+        courseMap.put("courseId", c.getCourseId());
+        courseMap.put("instructorId", c.getInstructorId());
+        courseMap.put("status", c.getStatus().name());
+
+        JSONArray lessonsArray = new JSONArray();
+        for (Lesson ls : c.getLessons()) {
+            Map<String, Object> lessonMap = new LinkedHashMap<>();
+            lessonMap.put("lessonId", ls.getLessonId());
+            lessonMap.put("resources", ls.getResources());
+
+            // Quiz أو null
+            if (ls.getQuiz() != null) {
+                Quiz q = ls.getQuiz();
+                Map<String, Object> quizMap = new LinkedHashMap<>();
+                quizMap.put("quizId", q.getQuizId());
+                quizMap.put("title", q.getTitle());
+                quizMap.put("lessonId", q.getLessonId());
+                quizMap.put("maxRetries", q.getMaxRetries());
+
+                JSONArray questionsArr = new JSONArray();
+                if (q.getQuestions() != null) {
+                    for (Question ques : q.getQuestions()) {
+                        Map<String, Object> quesMap = new LinkedHashMap<>();
+                        quesMap.put("questionId", ques.getQuestionId());
+                        quesMap.put("text", ques.getText());
+                        quesMap.put("options", ques.getChoices());
+                        quesMap.put("correctAnswer", ques.getCorrectAnswer());
+                        questionsArr.put(new JSONObject(quesMap));
+                    }
                 }
-                obj.put("quizzes", quizzesArray);
-                L.put(obj);
-                }
-            o.put("lessons", L);
-
-            // بدلاً من: o.put("students", c.getStudents());
-            JSONArray stuArr = new JSONArray();
-            for (Student s : c.getStudents()) {
-                stuArr.put(s.getId());
+                quizMap.put("questions", questionsArr);
+                lessonMap.put("quiz", new JSONObject(quizMap));
+            } else {
+                lessonMap.put("quiz", JSONObject.NULL);
             }
-            o.put("students", stuArr);
 
+            lessonMap.put("title", ls.getTitle());
+            lessonMap.put("content", ls.getContent());
 
-            arr.put(o);
+            lessonsArray.put(new JSONObject(lessonMap));
         }
 
-        writeFile(COURSES_FILE, arr.toString(4));
+        courseMap.put("lessons", lessonsArray);
+        arr.put(new JSONObject(courseMap));
     }
+
+    writeFile(COURSES_FILE, arr.toString(4));
+}
+
+
+
     
     public ArrayList<Course> readCoursesForInstructor(String instructorId) {
         ArrayList<Course> allCourses = readCourses();
@@ -572,9 +581,21 @@ for (int j = 0; j < st.length(); j++) {
 
     // =====================================================================
     public void addCourse(Course newCourse) {
-        ArrayList<Course> courses = readCourses();
-        courses.add(newCourse);
-        writeCourses(courses);
+        // اقرأ كل الكورسات الموجودة
+    ArrayList<Course> courses = readCourses();
+
+    // تأكد ان الكورس فيه Lessons وQuiz
+    for (Lesson ls : newCourse.getLessons()) {
+        if (ls.getQuiz() == null) {
+            System.out.println("Warning: Lesson " + ls.getLessonId() + " has no quiz.");
+        }
+    }
+
+    // اضف الكورس الجديد
+    courses.add(newCourse);
+
+    // اكتب الملف بعد التعديل
+    writeCourses(courses);
     }
 
     public void updateCourse(Course updated) {
