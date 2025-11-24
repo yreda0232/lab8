@@ -1,2 +1,29 @@
 [
+    {
+        "role": "student",
+        "certificates": [],
+        "lessonCompleted": {},
+        "enrolledCourses": ["987"],
+        "progress": {},
+        "quizResults": {},
+        "userId": "9300",
+        "email": "r@.c",
+        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+        "username": "Ramez"
+    },
+    {
+        "role": "instructor",
+        "createdCourses": [],
+        "userId": "9375",
+        "email": "y@.c",
+        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+        "username": "Youssef"
+    },
+    {
+        "role": "admin",
+        "userId": "1000",
+        "email": "t@.c",
+        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+        "username": "Taras"
+    }
 ]

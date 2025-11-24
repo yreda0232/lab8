@@ -1,2 +1,17 @@
-[
-]
+[{
+    "lastModifiedBy": "",
+    "lastStatusChange": "",
+    "description": "5ara",
+    "students": ["9300"],
+    "title": "Maths",
+    "courseId": "987",
+    "instructorId": "9375",
+    "status": "APPROVED",
+    "lessons": [{
+        "lessonId": "789",
+        "resources": [],
+        "quizzes": [],
+        "title": "lesson1",
+        "content": "aarf"
+    }]
+}]
