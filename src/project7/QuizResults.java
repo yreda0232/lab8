@@ -28,6 +28,17 @@ public class QuizResults {
         this.attempts = attempts;
     }
 
+    
+    public QuizResults(String lessonId, int score, boolean passed) {
+    this.lessonId = lessonId;
+    this.score = score;
+    this.passed = passed;
+    this.attempts = 1;   // أول محاولة
+}
+    
+    
+    
+    
     public String getQuizId() { return quizId; }
     public String getLessonId() { return lessonId; }
     public int getScore() { return score; }
