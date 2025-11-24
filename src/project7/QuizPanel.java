@@ -18,12 +18,15 @@ public class QuizPanel extends javax.swing.JPanel {
     private ArrayList<Question> questions;
     private ArrayList<String> selectedAnswers;
     private QuizAttempt currentAttempt;
+    private StudentService service;
+    private Course selectedCourse;
     /**
      * Creates new form QuizPanel
      */
-    public QuizPanel(Student currentstudent,Lesson selectedLesson,Databasef db) {
+    public QuizPanel(Student currentstudent,Lesson selectedLesson,Databasef db,StudentService service,Course selectedCourse) {
         this.currentstudent=currentstudent;
         this.db=db;
+        this.service=service;
         this.selectedLesson=selectedLesson;
         this.questions=this.selectedLesson.getQuiz().getQuestions();
         this.selectedAnswers = new ArrayList<>();
@@ -31,6 +34,7 @@ public class QuizPanel extends javax.swing.JPanel {
         selectedAnswers.add(null);
     }
          this.currentAttempt = db.startOrGetNewAttempt(currentstudent.getId(), selectedLesson.getQuiz().getQuizId());
+         this.selectedCourse=selectedCourse;
 
         
         initComponents();
@@ -261,12 +265,20 @@ public class QuizPanel extends javax.swing.JPanel {
 
     // 2) نحسب السكور
     int finalScore = calculateScore();
+    boolean passed=false ;
+            if(finalScore>=selectedLesson.getQuiz().getQuestions().size())
+                passed=true;
+    
+   Student student = Student.getStudentById(currentstudent.getId());
+   
+   student.recordQuizResult(selectedCourse.getCourseId(),selectedLesson.getLessonId(), finalScore, passed);
+
 
     // 3) نحفظ السكور في الملف باستخدام نفس attempt اللي اتفتح من الأول
     db.saveAttemptScore(currentAttempt.getAttemptId(), finalScore);
 
     // 4) نفتح صفحة النتيجة
-    /*ResultPanel resultPanel = new ResultPanel(finalScore, questions, selectedAnswers);
+    ResultPanel resultPanel = new ResultPanel(finalScore, questions, selectedAnswers,service,currentstudent,db);
 
     // 5) نخليها تبان
     javax.swing.JFrame topFrame = (javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
@@ -277,7 +289,7 @@ public class QuizPanel extends javax.swing.JPanel {
     resultFrame.setContentPane(resultPanel);
     resultFrame.pack();
     resultFrame.setLocationRelativeTo(null); // يظهر في النص
-    resultFrame.setVisible(true);*/
+    resultFrame.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
 
