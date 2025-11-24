@@ -91,10 +91,6 @@ public Lesson getLessonById(String lessonId) {
     public void setLastStatusChange(String lastStatusChange) {
         this.lastStatusChange = lastStatusChange;
     }
-
-    
-    
-    
     
     
     public void editCourse(String newTitle, String newDescription, String newInstructorId) {

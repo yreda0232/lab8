@@ -57,7 +57,6 @@ public class Lesson {
         return resources;
     }
     
-
     // Setters
     public void setTitle(String title) {
         this.title = title;
@@ -83,7 +82,6 @@ public class Lesson {
         this.resources = resources;
     }
 
-  
     
     
 
