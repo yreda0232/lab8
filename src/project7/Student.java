@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class Student extends User {
 
         private ArrayList<String> enrolledCourses; 
-        private HashMap<String, Integer> quizResults;
+        
         private HashMap<String, Boolean> lessonCompleted;
     private HashMap<String, ArrayList<String>> progress;
     private ArrayList<Certificate> certificates = new ArrayList<>();
@@ -28,15 +28,25 @@ public class Student extends User {
         this.enrolledCourses = new ArrayList<>();  
     }
     
+    
     public void recordQuizResult(String courseId, String lessonId, int score, boolean passed) {
+
     String key = courseId + "_" + lessonId;
-    quizResults.put(key, score);
+
+    // Create QuizResults object
+    QuizResults result = new QuizResults(lessonId, score, passed);
+
+    quizResults.put(key, result);
     lessonCompleted.put(key, passed);
 
     if (passed) {
-        markLessonCompleted(courseId,lessonId);
+        markLessonCompleted(courseId, lessonId);
     }
 }
+    
+    
+    
+    
     
 // --- ENROLLMENT ---
     public void enrollCourse(String courseId) {
@@ -99,7 +109,7 @@ public class Student extends User {
    
     
     public ArrayList<String> getEnrolledCourses() {return enrolledCourses;}
-    public HashMap<String, Integer> getQuizResults() { return quizResults; }
+    
     public HashMap<String, Boolean> getLessonCompleted() { return lessonCompleted; }
     public HashMap<String,ArrayList<String>> getProgress() {return progress;}
     public String getId() {return id;}
