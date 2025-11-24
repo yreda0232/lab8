@@ -82,7 +82,18 @@ JSONObject lessonCompletedObj = o.optJSONObject("lessonCompleted");
 JSONObject quizResultsObj = o.optJSONObject("quizResults");
           if (quizResultsObj != null) {
           for (String key : quizResultsObj.keySet()) {
-          s.getQuizResults().put(key, quizResultsObj.getInt(key));
+         JSONObject qrObj = quizResultsObj.getJSONObject(key);
+
+QuizResults qr = new QuizResults(
+    qrObj.getString("quizId"),
+    qrObj.getString("lessonId"),
+    qrObj.getInt("score"),
+    qrObj.getBoolean("passed"),
+    qrObj.getInt("attempts")
+);
+
+s.getQuizResults().put(key, qr);
+              
           }
           }
 JSONObject prog = o.getJSONObject("progress");
