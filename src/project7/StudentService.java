@@ -164,12 +164,7 @@ System.out.println("Eligible for certificate: " + student.getId());
             return null;
         }
     }
-    /*// لو عنده شهادة قبل كده لنفس الكورس
-    for (Certificate c : student.getCertificates()) {
-        if (c.getCourseId().equals(course.getCourseId())) {
-            return c; // موجودة أصلاً
-        }
-    }*/
+   
 
     // Generate certificate
     String certId = "CERT-" + System.currentTimeMillis();

@@ -90,14 +90,7 @@ public class LessonViewerFrame extends javax.swing.JPanel {
             completed ? "Yes" : "No"
         });
     }
-   /* // Auto check certificate generation
-Course course = Course.getCourseById(courseId);
-if (currentStudent.hasCompletedCourse(course)) {
-    Certificate cert = service.generateCertificateIfEligible(currentStudent, course);
-    if (cert != null) {
-        db.updateStudent(currentStudent);
-    }
-}*/
+   
 }
     
     

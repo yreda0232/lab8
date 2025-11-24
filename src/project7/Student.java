@@ -44,14 +44,7 @@ public class Student extends User {
             enrolledCourses.add(courseId);
         }
     }
-   /* public void markLessonCompleted(String courseId, String lessonId) {
-        progress.putIfAbsent(courseId, new ArrayList<>());
-        ArrayList<String> completed = progress.get(courseId);
-
-        if (!completed.contains(lessonId)) {
-            completed.add(lessonId);
-        }
-    }*/
+   
     
     public void markLessonCompleted(String courseId, String lessonId) {
     progress.putIfAbsent(courseId, new ArrayList<>());
@@ -103,10 +96,7 @@ public class Student extends User {
 
     
     
-   /* public boolean hasCompletedLesson(String courseId, int lessonId) {
-    String key = courseId + "_" + lessonId;
-    return lessonCompleted.getOrDefault(key, false);
-    } */
+   
     
     public ArrayList<String> getEnrolledCourses() {return enrolledCourses;}
     public HashMap<String, Integer> getQuizResults() { return quizResults; }
