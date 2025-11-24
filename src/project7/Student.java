@@ -105,6 +105,18 @@ public class Student extends User {
     }
 
     
+    public QuizResults getQuizResult(String quizId) {
+    // المفتاح في الـ quizResults عندك معمول كـ "courseId_lessonId"
+    // لو عايز تجيبها بس عن طريق quizId ممكن نبحث
+    for (QuizResults result : quizResults.values()) {
+        if (result.getQuizId() != null && result.getQuizId().equals(quizId)) {
+            return result;
+        }
+    }
+    return null; // لو مفيش نتيجة للـ quizId ده
+}
+
+    
     
    
     

@@ -1,1 +1,100 @@
-[ { "lastModifiedBy": "", "lastStatusChange": "", "description": "5ara", "students": ["9300"], "title": "Maths", "courseId": "987", "instructorId": "9375", "status": "APPROVED", "lessons": [ { "lessonId": "789", "resources": [], "quizzes": [], "title": "lesson1", "content": "aarf" }, { "lessonId": "555", "resources": ["New Resources"], "quizzes": [], "title": "lesson2", "content": "zeft" } ] }]
+[{
+    "lastModifiedBy": "",
+    "lastStatusChange": "",
+    "description": "5ara",
+    "students": ["9300"],
+    "title": "Maths",
+    "courseId": "987",
+    "instructorId": "9375",
+    "status": "APPROVED",
+    "lessons": [
+        {
+            "quiz": {
+                "questions": [
+                    {
+                        "options": [
+                            "3",
+                            "4",
+                            "5",
+                            "6"
+                        ],
+                        "questionId": "Q-1",
+                        "text": "What is 2+2?",
+                        "correctAnswer": "4"
+                    },
+                    {
+                        "options": [
+                            "3",
+                            "4",
+                            "5",
+                            "6"
+                        ],
+                        "questionId": "Q-2",
+                        "text": "What is 2+2?",
+                        "correctAnswer": "4"
+                    },
+                    {
+                        "options": [
+                            "3",
+                            "4",
+                            "5",
+                            "6"
+                        ],
+                        "questionId": "Q-3",
+                        "text": "What is 2+2?",
+                        "correctAnswer": "4"
+                    },
+                    {
+                        "options": [
+                            "1",
+                            "2",
+                            "3",
+                            "4"
+                        ],
+                        "questionId": "Q-4",
+                        "text": "What is 5-3?",
+                        "correctAnswer": "2"
+                    }
+                ],
+                "lessonId": "789",
+                "maxRetries": 2,
+                "title": "Sample Quiz 1",
+                "quizId": "QZ-1"
+            },
+            "lessonId": "789",
+            "resources": [],
+            "title": "lesson1",
+            "content": "aarf"
+        },
+        {
+            "quiz": null,
+            "lessonId": "790",
+            "resources": [],
+            "title": "lesson2",
+            "content": "content of lesson2"
+        },
+        {
+            "quiz": {
+                "questions": [{
+                    "options": [
+                        "4",
+                        "5",
+                        "6",
+                        "7"
+                    ],
+                    "questionId": "Q-3",
+                    "text": "What is 10/2?",
+                    "correctAnswer": "5"
+                }],
+                "lessonId": "791",
+                "maxRetries": 2,
+                "title": "Sample Quiz 2",
+                "quizId": "QZ-2"
+            },
+            "lessonId": "791",
+            "resources": [],
+            "title": "lesson3",
+            "content": "content of lesson3"
+        }
+    ]
+}]
