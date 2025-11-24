@@ -59,28 +59,30 @@ public class ViewInsightsFrame extends javax.swing.JPanel {
 }
     
     
-    private void displayBarChart(double completionPercentage) {
-    // Create dataset
-    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-    dataset.addValue(completionPercentage, "Completion", "Course");
+    private void displayAllCoursesChart(ArrayList<Course> courses) {
 
-    // Create chart
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+    for (Course c : courses) {
+        double comp = calculateCourseCompletion(c);
+        dataset.addValue(comp, "Completion %", c.getTitle());
+    }
+
     JFreeChart barChart = ChartFactory.createBarChart(
-            "Student Completion",     // Chart Title
-            "Metric",                 // X-axis label
-            "Percentage",             // Y-axis label
+            "Course Completion",
+            "Course",
+            "Percentage",
             dataset
     );
 
-    // Convert chart to Swing panel
     ChartPanel chart = new ChartPanel(barChart);
 
-    // Clear old chart
     chartPanel.removeAll();
-    chartPanel.setLayout(new BorderLayout());
-    chartPanel.add(chart, BorderLayout.CENTER);
-    chartPanel.validate();
+chartPanel.add(chart, BorderLayout.CENTER);
+chartPanel.revalidate();
+chartPanel.repaint();
 }
+    
     
     
     private void loadInsights() {
@@ -93,32 +95,26 @@ public class ViewInsightsFrame extends javax.swing.JPanel {
     double totalQuizScore = 0;
     int quizCount = 0;
 
-    // Clear old table data
+   
+    
+    
     DefaultTableModel model = (DefaultTableModel) quizTable.getModel();
     model.setRowCount(0);
 
     for (Course c : courses) {
-        int enrolled = c.getStudents().size();
-        totalStudents += enrolled;
 
-        // حساب نسبة Completion للكورس
+        totalStudents += c.getStudents().size();
+
         for (Student st : c.getStudents()) {
-            if (st.hasCompletedCourse(c))
-                totalCompletion++;
+            if (st.hasCompletedCourse(c)) totalCompletion++;
         }
-        
-        
-        double percentage = calculateCourseCompletion(c);
-        displayBarChart(percentage);
-        
 
-        // ------------ QUIZ TABLE SECTION ------------
+        // ====== QUIZ TABLE ======
         for (Lesson lesson : c.getLessons()) {
             for (Student st : c.getStudents()) {
 
                 QuizResults qr = st.getQuizResults().get(lesson.getLessonId());
                 if (qr != null) {
-
                     model.addRow(new Object[]{
                             lesson.getTitle(),
                             qr.getScore() + "%",
@@ -133,23 +129,20 @@ public class ViewInsightsFrame extends javax.swing.JPanel {
         }
     }
 
-    // ========= Summary Stats =========
-
+    // ======= SUMMARY =======
     if (totalStudents > 0) {
         avgCompletionLabel.setText(String.format("%.2f%%", (totalCompletion / totalStudents) * 100));
-    } else {
-        avgCompletionLabel.setText("0%");
     }
 
     totalStudentsLabel.setText(String.valueOf(totalStudents));
 
     if (quizCount > 0) {
         avgQuizLabel.setText(String.format("%.2f%%", totalQuizScore / quizCount));
-    } else {
-        avgQuizLabel.setText("0%");
     }
-}
 
+    // ======= DISPLAY CHART =======
+    displayAllCoursesChart(courses);
+}
     
     
     
@@ -185,17 +178,7 @@ public class ViewInsightsFrame extends javax.swing.JPanel {
         avgQuizLabel = new javax.swing.JLabel();
 
         chartPanel.setBackground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout chartPanelLayout = new javax.swing.GroupLayout(chartPanel);
-        chartPanel.setLayout(chartPanelLayout);
-        chartPanelLayout.setHorizontalGroup(
-            chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        chartPanelLayout.setVerticalGroup(
-            chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        chartPanel.setLayout(new java.awt.BorderLayout());
 
         quizTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -255,21 +238,27 @@ public class ViewInsightsFrame extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(79, 79, 79)
+                        .addComponent(chartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(98, 98, 98)
+                        .addComponent(chartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(82, Short.MAX_VALUE))
