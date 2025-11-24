@@ -222,21 +222,28 @@ loadAvailableCourses();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        int selectedRow = jTable1.getSelectedRow();
+        
+        int row = jTable1.getSelectedRow();
 
-    if (selectedRow == -1) {
+    if (row == -1) {
         JOptionPane.showMessageDialog(this, "Please select a course first.");
         return;
     }
 
-    String courseId = jTable1.getValueAt(selectedRow, 0).toString();
-    LessonViewerFrame lv = new LessonViewerFrame(courseId, currentStudent, service, db);
-    
-    lv.setVisible(true);
+    String courseId = jTable1.getValueAt(row, 0).toString();
+
+    OpenLessonFrame lessonsFrame = new OpenLessonFrame(courseId, currentStudent, service, db);
+    lessonsFrame.setVisible(true);
 
     SwingUtilities.getWindowAncestor(this).dispose();
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    
+    
+    
+    
+    
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
          StudentDashboardFrame dashboard = new StudentDashboardFrame(currentStudent , service , db);
         dashboard.setVisible(true);
