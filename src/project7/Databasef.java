@@ -441,13 +441,7 @@ for (int j = 0; j < st.length(); j++) {
         return changed;
     }
     
-    // hena beygenerate Certificate Automatically
-    public Certificate generateCertificate(String studentId, String courseId) {
-    String certId = "CERT-" + System.currentTimeMillis();
-    String date = java.time.LocalDate.now().toString();
-
-    return new Certificate(certId, studentId, courseId, date);
-}
+    
 
 
     public static ArrayList<QuizAttempt> readQuizAttempts() {
