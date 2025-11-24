@@ -97,7 +97,6 @@ public class LessonViewerFrame extends javax.swing.JPanel {
    
     
     private void markLessonCompleted() {
-
     int row = jTable1.getSelectedRow();
     if (row == -1) {
         JOptionPane.showMessageDialog(this, "Select a lesson first!");
@@ -106,10 +105,28 @@ public class LessonViewerFrame extends javax.swing.JPanel {
 
     String lessonId = jTable1.getValueAt(row, 0).toString();
 
-    // Mark as completed in student object
-    currentStudent.markLessonCompleted(courseId, lessonId);
+    // جلب الكورس والدرس
+    Course course = Course.getCourseById(courseId);
+    Lesson lesson = course.getLessonById(lessonId);
 
-    // Save in DB
+    // تحقق من الـ Quiz لو موجود
+    if (lesson.getQuiz() != null) {
+        QuizResults result = currentStudent.getQuizResult(lesson.getQuiz().getQuizId());
+        if (result == null || !result.isPassed()) {
+            JOptionPane.showMessageDialog(this, "You must pass the quiz to complete this lesson!");
+            return;
+        }
+    }
+
+    // ✅ تحديث الـ progress
+    currentStudent.getProgress().putIfAbsent(courseId, new ArrayList<>());
+    ArrayList<String> completedLessons = currentStudent.getProgress().get(courseId);
+
+    if (!completedLessons.contains(lessonId)) {
+        completedLessons.add(lessonId);
+    }
+
+    // حفظ الطالب في قاعدة البيانات
     ArrayList<User> users = Databasef.readUsers();
     for (int i = 0; i < users.size(); i++) {
         if (users.get(i).getId().equals(currentStudent.getId())) {
@@ -120,27 +137,19 @@ public class LessonViewerFrame extends javax.swing.JPanel {
     Databasef.writeUsers(users);
 
     JOptionPane.showMessageDialog(this, "Lesson marked as completed!");
-
     loadLessons();
 
-    // Check if course completed
-    Course course = Course.getCourseById(courseId);
-
+    // تحقق إذا كمل الطالب الكورس بالكامل
     if (currentStudent.hasCompletedCourse(course)) {
-
-        // Generate certificate
-        Course c = Course.getCourseById(courseId);
-
-        Certificate cert = service.generateCertificateIfEligible(currentStudent, c);
-
+        Certificate cert = service.generateCertificateIfEligible(currentStudent, course);
         if (cert != null) {
             currentStudent.addCertificate(cert);
             db.updateStudent(currentStudent);
+            JOptionPane.showMessageDialog(this, "🎉 Congratulations! You completed the entire course!\nCertificate Issued!");
         }
-
-        JOptionPane.showMessageDialog(this, "🎉 Congratulations! You completed the entire course!\nCertificate Issued!");
     }
 }
+
 
     
     

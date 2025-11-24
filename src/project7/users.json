@@ -1,20 +1,10 @@
 [
     {
         "role": "student",
-        "certificates": [{
-            "certificateId": "CERT-1763957884809",
-            "issueDate": "2025-11-24",
-            "courseId": "987"
-        }],
-        "lessonCompleted": {
-            "987_789": true,
-            "987_555": true
-        },
+        "certificates": [],
+        "lessonCompleted": {},
         "enrolledCourses": ["987"],
-        "progress": {"987": [
-            "789",
-            "555"
-        ]},
+        "progress": {},
         "quizResults": {},
         "userId": "9300",
         "email": "r@.c",
