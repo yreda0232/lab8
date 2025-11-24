@@ -188,8 +188,9 @@ JSONObject quizResultsObj = new JSONObject();
                     certObj.put("courseId", cert.getCourseId());
                     certObj.put("issueDate", cert.getIssueDate());
                     
+                    certArr.put(certObj); 
                 }
-                o.put("certifiacte", certArr);
+                o.put("certificates", certArr);
             }
 
             if (u instanceof Instructor i) {
@@ -231,11 +232,11 @@ JSONObject quizResultsObj = new JSONObject();
                     o.getString("instructorId"),
                     status
             );
-            String status = o.optString("status", "PENDING");
+            String currentStatus = o.optString("status", "PENDING");
             String lastMod = o.optString("lastModifiedBy", "");
             String lastChange = o.optString("lastStatusChange", "");
 
-            c.setStatus(CourseStatus.valueOf(status));
+            c.setStatus(Course.Status.valueOf(currentStatus));
             c.setLastModifiedBy(lastMod);
             c.setLastStatusChange(lastChange);
 
@@ -248,15 +249,12 @@ JSONObject quizResultsObj = new JSONObject();
                         L.getString("title"),
                         L.getString("content")
                 );
-                JSONArray quizzesArr = L.optJSONArray("quizzes");  // لو موجود
-    if (quizzesArr != null) {
-        for (int k = 0; k < quizzesArr.length(); k++) {
-            JSONObject Qz = quizzesArr.getJSONObject(k);
+                JSONObject Qz = L.optJSONObject("quiz");
+            if (Qz != null) {
             Quiz quiz = new Quiz(
                 Qz.getString("quizId"),
                 Qz.getString("title"),
                 new ArrayList<>(),  // questions هيتضافوا بعدين
-                Qz.optInt("maxRetries", 1),
                 l.getLessonId()
             );
             // قراءة الـ Questions
@@ -280,14 +278,13 @@ JSONObject quizResultsObj = new JSONObject();
                     quiz.addQuestion(question);
                 }
             }
-            l.addQuiz(quiz);
-        }
+            l.setQuiz(quiz);
     }
                 
                 c.addLesson(l);
             }
 
-            JSONArray st = o.getJSONArray("students");
+           /* JSONArray st = o.getJSONArray("students");
 
 for (int j = 0; j < st.length(); j++) {
     JSONObject stuObj = st.getJSONObject(j);
@@ -296,7 +293,18 @@ for (int j = 0; j < st.length(); j++) {
     if (s != null) {
         c.addStudent(s);
     }
-}
+} */
+           
+           JSONArray st = o.getJSONArray("students");
+
+            for (int j = 0; j < st.length(); j++) {
+                String id = st.getString(j);
+                Student s = Student.getStudentById(id);
+                if (s != null) {
+                    c.addStudent(s);
+                }
+            }
+
 
             courses.add(c);
         }
@@ -329,8 +337,8 @@ for (int j = 0; j < st.length(); j++) {
 
 
                 JSONArray quizzesArray = new JSONArray();
-                if (ls.getQuizzes() != null) {
-                    for (Quiz q : ls.getQuizzes()) {
+                if (ls.getQuiz() != null) {
+                        Quiz q = ls.getQuiz();
                         JSONObject quizObj = new JSONObject();
                         quizObj.put("quizId", q.getQuizId());
                         quizObj.put("title", q.getTitle());
@@ -344,21 +352,27 @@ for (int j = 0; j < st.length(); j++) {
                                 JSONObject quesObj = new JSONObject();
                                 quesObj.put("questionId", ques.getQuestionId());
                                 quesObj.put("text", ques.getText());
-                                quesObj.put("options", ques.getOptions());
+                                quesObj.put("options", ques.getChoices());
                                 quesObj.put("correctAnswer", ques.getCorrectAnswer());
                                 questionsArray.put(quesObj);
                             }
                         }
                         quizObj.put("questions", questionsArray);
                         quizzesArray.put(quizObj);
-                    }
+                    
                 }
                 obj.put("quizzes", quizzesArray);
                 L.put(obj);
                 }
             o.put("lessons", L);
 
-            o.put("students", c.getStudents());
+            // بدلاً من: o.put("students", c.getStudents());
+            JSONArray stuArr = new JSONArray();
+            for (Student s : c.getStudents()) {
+                stuArr.put(s.getId());
+            }
+            o.put("students", stuArr);
+
 
             arr.put(o);
         }
@@ -447,15 +461,109 @@ for (int j = 0; j < st.length(); j++) {
             o.getString("studentId"),
             o.getInt("attemptNumber")
         );
+        
+        JSONArray scoresArr = o.optJSONArray("scores");
+        if (scoresArr != null) {
+            for (int j = 0; j < scoresArr.length(); j++) {
+                attempt.addScore(scoresArr.getInt(j));
+            }
+        }
+        
         JSONObject ans = o.getJSONObject("answers");
         for (String qId : ans.keySet()) {
             attempt.addAnswer(qId, ans.getString(qId));
         }
-        attempt.setScore(o.getInt("score"));
+       // attempt.setScore(o.getInt("score"));
         attempts.add(attempt);
     }
     return attempts;
 }
+    
+    public static void writeQuizAttempts(ArrayList<QuizAttempt> attempts) {
+    JSONArray arr = new JSONArray();
+    for (QuizAttempt a : attempts) {
+        JSONObject o = new JSONObject();
+        o.put("attemptId", a.getAttemptId());
+        o.put("quizId", a.getQuizId());
+        o.put("studentId", a.getStudentId());
+        o.put("attemptNumber", a.getAttemptNumber());
+        JSONArray scoresArr = new JSONArray();
+        for (int score : a.getScores()) {
+            scoresArr.put(score);
+        }
+        o.put("scores", scoresArr);
+        
+        JSONObject answers = new JSONObject();
+        for (String qId : a.getAnswers().keySet()) {
+            answers.put(qId, a.getAnswers().get(qId));
+        }
+        o.put("answers", answers);
+        arr.put(o);
+    }
+    writeFile(QUIZ_ATTEMPTS_FILE, arr.toString(4));
+}
+    
+    public void addQuizToLesson(String courseId, String lessonId, Quiz quiz) {
+    ArrayList<Course> courses = readCourses();
+
+    for (Course c : courses) {
+        if (c.getCourseId().equals(courseId)) {
+
+            for (Lesson ls : c.getLessons()) {
+                if (ls.getLessonId().equals(lessonId)) {
+
+                    ls.setQuiz(quiz);  // أهو هنا
+
+                    writeCourses(courses); // و هنا بنكتب كل حاجة في الملف
+                    return;
+                }
+            }
+        }
+    }
+}
+ 
+    public QuizAttempt startOrGetNewAttempt(String studentId, String quizId) {
+    ArrayList<QuizAttempt> allAttempts = readQuizAttempts();
+    int maxRetries = 2;
+
+    // ندور على attempt موجود مسبقًا
+    for (QuizAttempt a : allAttempts) {
+        if (a.getStudentId().equals(studentId) && a.getQuizId().equals(quizId)) {
+            if (a.getAttemptNumber() < maxRetries) {
+                // مجرد ما الطالب يعمل attempt جديد، هنضيفه score لاحقًا عند submit
+                return a;
+            } else {
+                return null; // عدد المحاولات وصل الحد الأقصى
+            }
+        }
+    }
+
+    // لو مفيش attempt سابق
+    QuizAttempt newAttempt = new QuizAttempt(
+        "ATT-" + System.currentTimeMillis(),
+        quizId,
+        studentId,
+        1 // 0 لسه ما عملش أي attempt
+    );
+    allAttempts.add(newAttempt);
+    writeQuizAttempts(allAttempts);
+    return newAttempt;
+}
+
+
+    public void saveAttemptScore(String attemptId, int score) {
+    ArrayList<QuizAttempt> allAttempts = readQuizAttempts();
+
+    for (QuizAttempt a : allAttempts) {
+        if (a.getAttemptId().equals(attemptId)) {
+            a.addScore(score);
+            break;
+        }
+    }
+
+    writeQuizAttempts(allAttempts);
+}
+
 
     // =====================================================================
     public void addCourse(Course newCourse) {

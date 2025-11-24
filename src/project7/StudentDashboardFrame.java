@@ -85,7 +85,7 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Lessons completed");
+        jButton3.setText("Take Quiz");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -168,12 +168,13 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        JFrame f = new JFrame("Lessons Viewer");
-    f.setContentPane(new LessonViewerFrame());
-    f.pack();
-    f.setLocationRelativeTo(null);
-    f.setVisible(true);
-    this.dispose();
+        JFrame frame = new JFrame("Take Quiz");
+        frame.setContentPane(new TakeQuiz(currentStudent, db));
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        this.dispose();
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
