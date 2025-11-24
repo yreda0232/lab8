@@ -186,12 +186,12 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-     /* JFrame f = new JFrame("Certificates");
+      JFrame f = new JFrame("Certificates");
 f.setContentPane(new CertificateEarned(currentStudent, db));
 f.pack();
 f.setLocationRelativeTo(null);
 f.setVisible(true);
-this.dispose();*/
+this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
