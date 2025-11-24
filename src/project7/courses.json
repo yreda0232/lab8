@@ -6,7 +6,7 @@
     "title": "Maths",
     "courseId": "987",
     "instructorId": "9375",
-    "status": "APPROVED",
+    "status": "PENDING",
     "lessons": [{
         "lessonId": "789",
         "resources": [],
