@@ -130,4 +130,54 @@ db.writeUsers(users);
     return visible;
 }
     
+    
+    public boolean checkCourseCompleted(Student student, Course course) {
+
+    // 1) لو الطالب مش مسجل أصلاً
+    if (!student.getEnrolledCourses().contains(course.getCourseId()))
+        return false;
+
+    // 2) لازم الطالب يكمل كل الدروس
+    if (!student.hasCompletedCourse(course))
+        return false;
+
+    // 3) لازم يكون حل كل quizzes بتاعة كل درس (passed)
+    for (Lesson l : course.getLessons()) {
+        String key = course.getCourseId() + "_" + l.getLessonId();
+        Boolean passed = student.getLessonCompleted().getOrDefault(key, false);
+        if (!passed)
+            return false;
+    }
+
+    return true; // ✔ course fully completed
+}
+
+    
+    public Certificate generateCertificateIfEligible(Student student, Course course) {
+System.out.println("Eligible for certificate: " + student.getId());
+    if (!checkCourseCompleted(student, course))
+        return null;
+
+     for (Certificate c : student.getCertificates()) {
+        if (c.getCourseId().equals(course.getCourseId())) {
+            System.out.println("Certificate already exists for course " + course.getCourseId());
+            return null;
+        }
+    }
+   
+
+    // Generate certificate
+    String certId = "CERT-" + System.currentTimeMillis();
+    String date = java.time.LocalDate.now().toString();
+
+    Certificate cert = new Certificate(certId, student.getId(), course.getCourseId(), date);
+    student.addCertificate(cert);
+
+    // Update DB
+    db.updateStudent(student);
+
+    return cert;
+}
+
+    
 }

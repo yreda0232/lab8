@@ -6,6 +6,7 @@ package project7;
 
 import java.io.FileWriter;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import org.json.JSONObject;
 
@@ -15,11 +16,12 @@ import org.json.JSONObject;
  */
 public class CertificateEarned extends javax.swing.JPanel {
  private Student currentStudent;
+  private StudentService service ;
     private Databasef db;
     /**
      * Creates new form CertificateEarned
      */
-    public CertificateEarned(Student s, Databasef db) {
+    public CertificateEarned(Student s,StudentService service , Databasef db) {
         this.currentStudent=s;
         this.db=db;
         
@@ -27,7 +29,12 @@ public class CertificateEarned extends javax.swing.JPanel {
         loadCertificates();
     }
 private void loadCertificates() {
-    Student s = this.currentStudent;
+    System.out.println("Certificates count: " + currentStudent.getCertificates().size());
+    Student s = Student.getStudentById(currentStudent.getId());
+
+    if (s == null) return;
+
+    this.currentStudent = s;  // تحديث النسخة المحلية
 
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
     model.setRowCount(0);
@@ -41,7 +48,6 @@ private void loadCertificates() {
         };
         model.addRow(row);
     }
-    
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -56,6 +62,7 @@ private void loadCertificates() {
         jTable1 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -91,6 +98,13 @@ private void loadCertificates() {
             }
         });
 
+        jButton3.setText("Back");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -102,9 +116,11 @@ private void loadCertificates() {
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(128, 128, 128)
                 .addComponent(jButton2)
-                .addGap(38, 38, 38))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addGap(63, 63, 63))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,7 +130,8 @@ private void loadCertificates() {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addGap(30, 30, 30))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -130,7 +147,7 @@ private void loadCertificates() {
         return;
         }
 
-    String certificateId = jTable1.getValueAt(row, 3).toString();
+    String certificateId = jTable1.getValueAt(row, 0).toString();
     Student s = this.currentStudent;
 
     for (Certificate c : s.getCertificates()) {
@@ -153,7 +170,7 @@ private void loadCertificates() {
         return;
     }
 
-    String certId = jTable1.getValueAt(row, 3).toString();
+    String certId = jTable1.getValueAt(row, 0).toString();
 
     Student s = this.currentStudent;
 
@@ -181,10 +198,17 @@ private void loadCertificates() {
     }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        StudentDashboardFrame dashboard = new StudentDashboardFrame(currentStudent , service , db);
+        dashboard.setVisible(true);
+        SwingUtilities.getWindowAncestor(this).dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
