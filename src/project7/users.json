@@ -1,51 +1,33 @@
 [
-  {
-    "role": "student",
-    "certificates": [
-      {
-        "certificateId": "CERT-1763957884809",
-        "issueDate": "2025-11-24",
-        "courseId": "987"
-      }
-    ],
-    "lessonCompleted": {
-      "987_789": true,
-      "987_555": true
+    {
+        "role": "student",
+        "certificates": [{
+            "certificateId": "CERT-1763955627784",
+            "issueDate": "2025-11-24",
+            "courseId": "987"
+        }],
+        "lessonCompleted": {},
+        "enrolledCourses": ["987"],
+        "progress": {},
+        "quizResults": {},
+        "userId": "9300",
+        "email": "r@.c",
+        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+        "username": "Ramez"
     },
-    "enrolledCourses": ["987"],
-    "progress": {
-      "987": ["789", "555"]
+    {
+        "role": "instructor",
+        "createdCourses": [],
+        "userId": "9375",
+        "email": "y@.c",
+        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+        "username": "Youssef"
     },
-    "quizResults": {
-      "QZ789": {
-        "score": 90,
-        "passed": true,
-        "attempts": 1
-      },
-      "QZ555": {
-        "score": 70,
-        "passed": true,
-        "attempts": 2
-      }
-    },
-    "userId": "9300",
-    "email": "r@.c",
-    "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-    "username": "Ramez"
-  },
-  {
-    "role": "instructor",
-    "createdCourses": ["987"],
-    "userId": "9375",
-    "email": "y@.c",
-    "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-    "username": "Youssef"
-  },
-  {
-    "role": "admin",
-    "userId": "1000",
-    "email": "t@.c",
-    "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-    "username": "Taras"
-  }
+    {
+        "role": "admin",
+        "userId": "1000",
+        "email": "t@.c",
+        "passwordHash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+        "username": "Taras"
+    }
 ]

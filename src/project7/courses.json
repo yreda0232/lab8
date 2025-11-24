@@ -1,5 +1,4 @@
-[
-  {
+[{
     "lastModifiedBy": "",
     "lastStatusChange": "",
     "description": "5ara",
@@ -8,51 +7,11 @@
     "courseId": "987",
     "instructorId": "9375",
     "status": "APPROVED",
-    "lessons": [
-      {
+    "lessons": [{
         "lessonId": "789",
         "resources": [],
+        "quizzes": [],
         "title": "lesson1",
-        "content": "aarf",
-        "quizzes": [
-          {
-            "quizId": "QZ789",
-            "lessonId": "789",
-            "title": "Quiz for Lesson 1",
-            "maxRetries": 2,
-            "questions": [
-              {
-                "questionId": "Q1",
-                "text": "What is 2 + 2?",
-                "options": ["3", "4", "5"],
-                "correctAnswer": "4"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "lessonId": "555",
-        "resources": ["New Resources"],
-        "title": "lesson2",
-        "content": "zeft",
-        "quizzes": [
-          {
-            "quizId": "QZ555",
-            "lessonId": "555",
-            "title": "Quiz for Lesson 2",
-            "maxRetries": 2,
-            "questions": [
-              {
-                "questionId": "Q1",
-                "text": "What is 10 / 2?",
-                "options": ["3", "5", "7"],
-                "correctAnswer": "5"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-]
+        "content": "aarf"
+    }]
+}]
