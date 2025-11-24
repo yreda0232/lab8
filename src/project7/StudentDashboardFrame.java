@@ -20,17 +20,6 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
      * Creates new form StudentDashboardFrame
      */
     
-    public StudentDashboardFrame() {
-    this.currentStudent = new Student("S1", "Dummy", "dummy@test.com", "123");
-    this.service = new StudentService();
-    this.db = new Databasef();
-
-    initComponents();
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    pack();
-    setLocationRelativeTo(null);
-    setVisible(true);
-    }
     
     public StudentDashboardFrame(Student s, StudentService service, Databasef db) {
 
@@ -38,6 +27,7 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
         this.currentStudent = s;
         this.service = service;
         this.db = db;
+        autoGenerateCertificates();
 
         // حطّينا JPanel الحقيقي
         initComponents();
@@ -47,6 +37,27 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
+    
+    private void autoGenerateCertificates() {
+
+    StudentService service = new StudentService();
+
+    for (String courseId : currentStudent.getEnrolledCourses()) {
+
+        Course c = Course.getCourseById(courseId);
+        if (c == null) continue;
+
+        if (currentStudent.hasCompletedCourse(c)) {
+
+            Certificate cert =
+                service.generateCertificateIfEligible(currentStudent, c);
+
+            if (cert != null) {
+                db.updateStudent(currentStudent);
+            }
+        }
+    }
+}
     
    
 
@@ -186,12 +197,12 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-     /* JFrame f = new JFrame("Certificates");
-f.setContentPane(new CertificateEarned(currentStudent, db));
+     JFrame f = new JFrame("Certificates");
+f.setContentPane(new CertificateEarned(currentStudent, service,db));
 f.pack();
 f.setLocationRelativeTo(null);
 f.setVisible(true);
-this.dispose();*/
+this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
@@ -224,7 +235,7 @@ this.dispose();*/
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new StudentDashboardFrame().setVisible(true);
+                
             }
         });
     }

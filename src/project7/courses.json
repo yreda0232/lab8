@@ -7,11 +7,20 @@
     "courseId": "987",
     "instructorId": "9375",
     "status": "APPROVED",
-    "lessons": [{
-        "lessonId": "789",
-        "resources": [],
-        "quizzes": [],
-        "title": "lesson1",
-        "content": "aarf"
-    }]
+    "lessons": [
+        {
+            "lessonId": "789",
+            "resources": [],
+            "quizzes": [],
+            "title": "lesson1",
+            "content": "aarf"
+        },
+        {
+            "lessonId": "555",
+            "resources": ["New Resources"],
+            "quizzes": [],
+            "title": "lesson2",
+            "content": "zeft"
+        }
+    ]
 }]

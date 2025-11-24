@@ -25,6 +25,14 @@ public class Certificate {
     public String getStudentId() {return studentId;}
     public String getCourseId() {return courseId;}
     public String getIssueDate() {return issueDate;}
+
+    public void setCertificateId(String certificateId) {this.certificateId = certificateId;}
+
+    public void setStudentId(String studentId) {this.studentId = studentId;}
+
+    public void setCourseId(String courseId) {this.courseId = courseId;}
+
+    public void setIssueDate(String issueDate) {this.issueDate = issueDate;}
     
     
     
