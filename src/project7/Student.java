@@ -28,13 +28,13 @@ public class Student extends User {
         this.enrolledCourses = new ArrayList<>();  
     }
     
-    public void recordQuizResult(String courseId, int lessonId, int score, boolean passed) {
+    public void recordQuizResult(String courseId, String lessonId, int score, boolean passed) {
     String key = courseId + "_" + lessonId;
     quizResults.put(key, score);
     lessonCompleted.put(key, passed);
 
     if (passed) {
-        markLessonCompleted(courseId, String.valueOf(lessonId));
+        markLessonCompleted(courseId,lessonId);
     }
 }
     

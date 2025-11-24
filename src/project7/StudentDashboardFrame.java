@@ -169,7 +169,7 @@ public class StudentDashboardFrame extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         JFrame frame = new JFrame("Take Quiz");
-        frame.setContentPane(new TakeQuiz(currentStudent, db));
+        frame.setContentPane(new TakeQuiz(currentStudent, db,service));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
