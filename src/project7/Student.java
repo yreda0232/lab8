@@ -40,7 +40,11 @@ public class Student extends User {
     lessonCompleted.put(key, passed);
 
     if (passed) {
+<<<<<<< Updated upstream
         markLessonCompleted(courseId, lessonId);
+=======
+        markLessonCompleted(courseId,lessonId);
+>>>>>>> Stashed changes
     }
 }
     

@@ -28,6 +28,7 @@ public class QuizResults {
         this.attempts = attempts;
     }
 
+<<<<<<< Updated upstream
     
     public QuizResults(String lessonId, int score, boolean passed) {
     this.lessonId = lessonId;
@@ -39,6 +40,8 @@ public class QuizResults {
     
     
     
+=======
+>>>>>>> Stashed changes
     public String getQuizId() { return quizId; }
     public String getLessonId() { return lessonId; }
     public int getScore() { return score; }
