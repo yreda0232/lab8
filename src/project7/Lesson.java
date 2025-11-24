@@ -12,7 +12,7 @@ public class Lesson {
     private String title;
     private String content;
     private ArrayList<String> resources;
-    private ArrayList<Quiz> quizzes;
+    private Quiz quiz;
 
     // Constructor بدون resources
     public Lesson(String lessonId, String title, String content) {
@@ -20,7 +20,7 @@ public class Lesson {
         this.title = title;
         this.content = content;
         this.resources = new ArrayList<>();
-        this.quizzes = new ArrayList<>();
+        this.quiz=null;
     }
 
     // Constructor بالresources
@@ -29,15 +29,16 @@ public class Lesson {
         this.title = title;
         this.content = content;
         this.resources = resources;
-        this.quizzes = new ArrayList<>();
+                this.quiz=null;
+
 
     }
 
     
     // Getters
     
-    public ArrayList<Quiz> getQuizzes() {
-        return quizzes;
+    public Quiz getQuiz() {
+        return quiz;
     }
 
     public String getLessonId() {
@@ -55,7 +56,7 @@ public class Lesson {
     public ArrayList<String> getResources() {
         return resources;
     }
-
+    
     // Setters
     public void setTitle(String title) {
         this.title = title;
@@ -64,6 +65,7 @@ public class Lesson {
     public void setContent(String content) {
         this.content = content;
     }
+    public void setQuiz(Quiz quiz) { this.quiz = quiz; }
 
     // Manage Resources
     public void addResource(String resource) {
@@ -79,13 +81,9 @@ public class Lesson {
     public void setResources(ArrayList<String> resources) {
         this.resources = resources;
     }
+
     
-    public void addQuiz(Quiz quiz) {
-    if (this.quizzes == null) {
-        this.quizzes = new ArrayList<>();
-    }
-    this.quizzes.add(quiz);
-    }
+    
 
 
 }

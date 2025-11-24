@@ -43,6 +43,17 @@ public class Course {
         this(courseId, title, description, instructorId);
         if (status != null) this.status = status;
     }
+public int getTotalLessons() {
+    return lessons.size();
+}
+
+public Lesson getLessonById(String lessonId) {
+    for (Lesson l : lessons) {
+        if (l.getLessonId().equals(lessonId)) return l;
+    }
+    return null;
+}
+ 
 
     // ----------------- GETTERS -----------------
     public String getCourseId() {return courseId;}
@@ -69,9 +80,17 @@ public class Course {
     
     public Status getStatus(){return status;}
 
-    public void setLastModifiedBy(String lastModifiedBy) {this.lastModifiedBy = lastModifiedBy;}
+    public String getLastModifiedBy() {return lastModifiedBy;}
 
-    public void setLastStatusChange(String lastStatusChange) {this.lastStatusChange = lastStatusChange;}
+    public String getLastStatusChange() {return lastStatusChange;}
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public void setLastStatusChange(String lastStatusChange) {
+        this.lastStatusChange = lastStatusChange;
+    }
     
     
     public void editCourse(String newTitle, String newDescription, String newInstructorId) {
@@ -91,22 +110,17 @@ public class Course {
         }
     }
 
-   
-
-    
     public void addLesson(Lesson lesson) {
         if (!lessons.contains(lesson)) {
             lessons.add(lesson);
         }
     }
 
-    
     public void addStudent(Student s) {
         if (!students.contains(s)) {
             students.add(s);
         }
     }
-
     
     public ArrayList<String> getStudentIds() {
         ArrayList<String> ids = new ArrayList<>();

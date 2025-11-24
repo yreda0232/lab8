@@ -17,6 +17,7 @@ public class EnrollCoursesFrame extends javax.swing.JPanel {
     private Student currentStudent ;
     private StudentService service ;
     private Databasef db ;
+    private String selectedCourseId = null;
     /**
      * Creates new form EnrollCoursesFrame
      */
@@ -33,6 +34,7 @@ public class EnrollCoursesFrame extends javax.swing.JPanel {
     // Load all courses from database
     ArrayList<Course> allCourses = Databasef.readCourses();
     ArrayList<User> allUsers = Databasef.readUsers();
+    ArrayList<Course> approved = new ArrayList<>();
 
     // Prepare table model
     javax.swing.table.DefaultTableModel model =
@@ -42,6 +44,15 @@ public class EnrollCoursesFrame extends javax.swing.JPanel {
 
     // Fill table with data
     for (Course c : allCourses) {
+        
+        if (c.getStatus() != Course.Status.APPROVED) {
+            continue;  
+        }
+        
+        if (currentStudent.getEnrolledCourses().contains(c.getCourseId())) {
+            continue;
+        }
+
 
         // Get instructor name from users list
         String instructorName = "";
@@ -92,6 +103,11 @@ public class EnrollCoursesFrame extends javax.swing.JPanel {
         ));
         jTable1.setShowHorizontalLines(true);
         jTable1.setShowVerticalLines(true);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setText("Enroll");
@@ -224,6 +240,13 @@ JOptionPane.showMessageDialog(this, "Enrolled Successfully!");
         dashboard.setVisible(true);
         SwingUtilities.getWindowAncestor(this).dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        int row = jTable1.getSelectedRow();
+    if (row == -1) return; 
+    
+    selectedCourseId = jTable1.getValueAt(row, 0).toString();
+    }//GEN-LAST:event_jTable1MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -4,6 +4,7 @@
  */
 package project7;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 
 import javax.swing.SwingUtilities;
 
@@ -45,6 +46,7 @@ public ViewCoursesFrame(Student s, StudentService service, Databasef db) {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -85,12 +87,24 @@ public ViewCoursesFrame(Student s, StudentService service, Databasef db) {
         ));
         jTable2.setShowHorizontalLines(true);
         jTable2.setShowVerticalLines(true);
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         jButton1.setText("Back");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("View Lessons");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
             }
         });
 
@@ -112,11 +126,13 @@ public ViewCoursesFrame(Student s, StudentService service, Databasef db) {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(310, 310, 310)
                                 .addComponent(jLabel2)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(85, 85, 85))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -130,7 +146,9 @@ public ViewCoursesFrame(Student s, StudentService service, Databasef db) {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addGap(41, 41, 41))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -144,6 +162,31 @@ SwingUtilities.getWindowAncestor(this).dispose();
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable2MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int row = jTable2.getSelectedRow();
+
+    if (row == -1) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Please select a course first!");
+        return;
+    }
+
+    // Get courseId from selected row (column 0)
+    String courseId = jTable2.getValueAt(row, 0).toString();
+
+    JFrame f = new JFrame("Lessons Viewer");
+    f.setContentPane(new LessonViewerFrame(courseId, currentStudent, service, db));
+    f.pack();
+    f.setLocationRelativeTo(null);
+    f.setVisible(true);
+
+    SwingUtilities.getWindowAncestor(this).dispose();
+    
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     private void loadTablesData() {
@@ -159,6 +202,14 @@ SwingUtilities.getWindowAncestor(this).dispose();
     model1.setRowCount(0);  // Clear table
 
     for (Course c : allCourses) {
+        
+        if (c.getStatus() != Course.Status.APPROVED) {
+            continue;  
+        }
+        
+        if (currentStudent.getEnrolledCourses().contains(c.getCourseId())) {
+            continue;
+        }
 
         // Get instructor name by instructorId
         String instructorName = "";
@@ -190,8 +241,8 @@ SwingUtilities.getWindowAncestor(this).dispose();
     String loggedStudentId = currentStudent.getId();
 
 
-    for (Course c : service.getVisibleCoursesForStudent()) {
-    for (User u : c.getStudents()) {
+    for (Course c : Databasef.readCourses()) {
+    for (Student u : c.getStudents()) {
         if (u.getId().equals(loggedStudentId)) {
             model2.addRow(new Object[]{
                 c.getCourseId(),
@@ -210,6 +261,7 @@ SwingUtilities.getWindowAncestor(this).dispose();
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
